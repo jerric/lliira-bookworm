@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<properties>
+		<property name="core-schema" value="" />
+	</properties>
+
+	<settings>
+		<setting name="defaultExecutorType" value="REUSE" />
+		<setting name="useGeneratedKeys" value="true" />
+		<setting name="cacheEnabled" value="true" />
+	</settings>
+
+	<typeAliases>
+		<typeAlias type="org.lliira.bookworm.core.persist.entity.AuthorEntity" alias="Author" />
+		<typeAlias type="net.lliira.bookworm.core.persist.entity.BookEntity" alias="Book" />
+		<typeAlias type="net.lliira.bookworm.core.persist.entity.BookAuthorEntity" alias="BookAuthor" />
+		<typeAlias type="net.lliira.bookworm.core.persist.entity.CategoryEntity" alias="Category" />
+		<typeAlias type="net.lliira.bookworm.core.persist.entity.CategoryBookEntity" alias="CategoryBook" />
+	</typeAliases>
+
+	<environments default="development">
+		<environment id="development">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+				<property name="driver" value="org.postgresql.Driver" />
+				<property name="url" value="jdbc:postgresql:${bookworm-db}" />
+				<property name="username" value="${bookworm-db-login}" />
+				<property name="password" value="${bookworm-db-password}" />
+			</dataSource>
+		</environment>
+	</environments>
+
+	<mappers>
+		<mapper resource="META-INF/mapper/AuthorMapper.xml" />
+		<mapper resource="META-INF/mapper/BookMapper.xml" />
+		<mapper resource="META-INF/mapper/BookAuthorMapper.xml" />
+		<mapper resource="META-INF/mapper/CategoryMapper.xml" />
+		<mapper resource="META-INF/mapper/CategoryBookMapper.xml" />
+	</mappers>
+</configuration>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lliira.bookworm.core.persist.mapper.CategoryMapper">
+
+	<cache />
+	
+	<resultMap type="Category" id="CategoryMap">
+		<id property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="parentId" column="parent_id" />
+		<result property="sortIndex" column="sort_index" />
+		<result property="description" column="description" />
+	</resultMap>
+
+	<select id="selectCategory" parameterType="int" resultMap="CategoryMap">
+    <![CDATA[
+        SELECT * FROM ${core-schema}categories WHERE id = #{id}
+    ]]>
+	</select>
+
+	<select id="selectCategoriesByParent" parameterType="int" resultMap="CategoryMap">
+    <![CDATA[
+        SELECT * FROM ${core-schema}categories WHERE parent_id = #{parentId} ORDER BY sort_idnex ASC
+    ]]>
+	</select>
+
+	<select id="selectCategoriesByBook" parameterType="int" resultMap="CategoryMap">
+    <![CDATA[
+        SELECT c.* FROM ${core-schema}categories c, ${core-schema}book_categories bc
+        WHERE c.id = bc.category_id AND bc.book_id = #{bookId}
+    ]]>
+	</select>
+
+	<select id="selectDescendantCategories" parameterType="int" resultMap="CategoryMap">
+    <![CDATA[
+        WITH RECURSIVE descendants (id) AS (
+            SELECT id FROM ${core-schema}categories WHERE id = #{id}
+          UNION ALL
+            SELECT c.id FROM ${core-schema}categories c, descendants d WHERE c.parent_id = d.id
+        )
+        SELECT * FROM ${core-schema}categories WHERE id IN (SELECT id FROM descendants)
+    ]]>
+	</select>
+
+	<insert id="insertCategory" parameterType="Category" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    <![CDATA[
+        INSERT INTO ${core-schema}categories (name, parent_id, sort_index, description)
+        VALUES (#{name}, #{parentId}, #{sortIndex}, #{description})
+    ]]>
+	</insert>
+
+	<update id="updateCategory" parameterType="Category">
+    <![CDATA[
+        UPDATE ${core-schema}categories
+        SET name = #{name}, parent_id = #{parentId}, sort_index = #{sortIndex}, description = #{description}
+        WHERE id = #{id}
+    ]]>
+	</update>
+
+	<delete id="deleteCategory" parameterType="int">
+    <![CDATA[
+        DELETE FROM ${core-schema}categories WHERE id = #{id}
+    ]]>
+	</delete>
+
+</mapper>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lliira.bookworm.core.persist.mapper.BookMapper">
+
+	<cache />
+
+	<resultMap type="Book" id="BookMap">
+		<id property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="nameSorted" column="name_sorted" />
+		<result property="publishDate" column="publish_date" />
+		<result property="collectTime" column="collect_time" />
+		<result property="goodreadsUrl" column="goodreads_url" />
+		<result property="goodreadsRank" column="goodreads_rank" />
+		<result property="summary" column="summary" />
+	</resultMap>
+
+	<select id="selectBook" parameterType="int" resultMap="BookMap">
+    <![CDATA[
+        SELECT * FROM ${core-schema}books WHERE id=#{id}
+    ]]>
+	</select>
+
+	<select id="selectBooksByName" parameterType="string" resultMap="BookMap">
+    <![CDATA[
+        SELECT * FROM ${core-schema}books WHERE name LIKE #{pattern}
+    ]]>
+	</select>
+
+	<select id="selectBooksByAuthor" parameterType="int" resultMap="BookMap">
+    <![CDATA[
+        SELECT b.* 
+        FROM ${core-schema}books b, ${core-schema}book_authors ba
+        WHERE b.id = ba.book_id AND ba.author_id = #{authorId}
+    ]]>
+	</select>
+
+	<select id="selectBooksByCategories" parameterType="int" resultMap="BookMap">
+        SELECT DISTINCT b.book_id, b.book_key, b.book_name, b.original, 
+        	   b.publish_date, b.description
+        FROM ${core-schema}books b, ${core-schema}book_categories bc
+        WHERE b.book_id = bc.book_id
+          AND bc.category_id IN
+    		 <foreach item="categoryId" index="index" collection="list" open="(" separator="," close=")">
+			   #{categoryId}
+			 </foreach>
+	</select>
+
+	<insert id="insertBook" parameterType="Book" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    <![CDATA[
+        INSERT INTO ${core-schema}books
+               (name, name_sorted, publish_date, collect_time, goodreads_url, goodreads_rank, summary)
+        VALUES (#{name}, #{nameSorted}, #{publishDate}, #{goodreadsUrl}, #{goodreadsRank}, #{summary})
+    ]]>
+	</insert>
+
+	<update id="updateBook" parameterType="Book">
+    <![CDATA[
+        UPDATE ${core-schema}books
+        SET name = #{name}, name_sorted = #{nameSorted}, publish_date = #{publishDate}, 
+            collect_time = #{collectTime}, goodreads_url = #{goodreadsUrl}, goodreads_rank = #{goodreadsRank},
+            summary = #{summary}
+        WHERE id = #{id}
+    ]]>
+	</update>
+
+	<delete id="deleteBook" parameterType="int">
+    <![CDATA[
+        DELETE FROM ${core-schema}books WHERE id = #{id}
+    ]]>
+	</delete>
+
+</mapper>
