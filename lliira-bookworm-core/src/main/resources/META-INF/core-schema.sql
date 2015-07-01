@@ -10,7 +10,6 @@ CREATE TABLE books (
 	name VARCHAR(200) NOT NULL,
 	publish_date DATE,
 	description TEXT,
-	version INT NOT NULL,
 	PRIMARY KEY (id)
 );
 
@@ -20,7 +19,6 @@ CREATE TABLE authors (
 	id INT NOT NULL AUTO_INCREMENT,
 	name VARCHAR(200) NOT NULL,
 	description TEXT,
-	version INT NOT NULL,
 	PRIMARY KEY (id)
 );
 
@@ -31,7 +29,6 @@ CREATE TABLE categories (
 	name VARCHAR(50) NOT NULL,
 	parent_id INT,
 	description TEXT,
-	version INT NOT NULL,
 	PRIMARY KEY (id),
 	UNIQUE (parent_id, name)
 );
@@ -40,7 +37,6 @@ CREATE TABLE book_authors (
 	id	INT NOT NULL AUTO_INCREMENT,
 	book_id INT NOT NULL,
 	author_id INT NOT NULL,
-	version INT NOT NULL,
 	PRIMARY KEY (id),
 	UNIQUE (book_id, author_id),
 	FOREIGN KEY (book_id) REFERENCES books (id),
@@ -53,7 +49,6 @@ CREATE TABLE category_books (
 	id	INT NOT NULL AUTO_INCREMENT,
 	category_id INT NOT NULL,
 	book_id INT NOT NULL,
-	version INT NOT NULL,
 	PRIMARY KEY (id),
 	UNIQUE (category_id, book_id),
 	FOREIGN KEY (category_id) REFERENCES categories (id),

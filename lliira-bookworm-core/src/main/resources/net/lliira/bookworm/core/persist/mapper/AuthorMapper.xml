@@ -6,49 +6,49 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<cache />
 	
-	<resultMap type="Author" id="AuthorMap">
+	<resultMap type="AuthorEntity" id="AuthorMap">
 		<id property="id" column="id" />
 		<result property="name" column="name" />
 		<result property="description" column="description" />
 	</resultMap>
 
-	<insert id="insert" parameterType="Author" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+	<insert id="insert" parameterType="AuthorEntity" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
     <![CDATA[
-        INSERT INTO ${core-schema}authors 
+        INSERT INTO authors 
         			(name, description)
         VALUES (#{name}, #{description})
     ]]>
 	</insert>
 
-	<update id="update" parameterType="Author">
+	<update id="update" parameterType="AuthorEntity">
     <![CDATA[
-        UPDATE ${core-schema}authors
+        UPDATE authors
         SET name = #{name}, description = #{description}
         WHERE id = #{id}
     ]]>
 	</update>
 
-	<delete id="delete" parameterType="Author">
+	<delete id="delete" parameterType="AuthorEntity">
     <![CDATA[
-        DELETE FROM ${core-schema}authors WHERE id = #{id}
+        DELETE FROM authors WHERE id = #{id}
     ]]>
 	</delete>
 
 	<select id="select" parameterType="int" resultMap="AuthorMap">
     <![CDATA[
-        SELECT * FROM ${core-schema}authors WHERE id = #{id}
+        SELECT * FROM authors WHERE id = #{id}
     ]]>
 	</select>
 
 	<select id="selectByName" parameterType="string" resultMap="AuthorMap">
     <![CDATA[
-        SELECT * FROM ${core-schema}authors WHERE name = #{name}
+        SELECT * FROM authors WHERE name = #{name}
     ]]>
 	</select>
 
-	<select id="selectByBook" parameterType="Book" resultMap="AuthorMap">
+	<select id="selectByBook" parameterType="BookEntity" resultMap="AuthorMap">
     <![CDATA[
-        SELECT a.* FROM ${core-schema}authors a, ${core-schema}book_authors ba 
+        SELECT a.* FROM authors a, book_authors ba 
         WHERE a.author_id = ba.author_id AND ba.book_id = #{id}
     ]]>
 	</select>

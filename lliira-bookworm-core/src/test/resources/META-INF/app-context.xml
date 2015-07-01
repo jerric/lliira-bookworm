@@ -11,18 +11,12 @@ http://www.springframework.org/schema/tx/spring-tx.xsd
 http://www.springframework.org/schema/context
 http://www.springframework.org/schema/context/spring-context.xsd">
 	<jdbc:embedded-database id="dataSource" type="H2">
-		<jdbc:script location="classpath:META-INF/sql/core-schema.sql" />
+		<jdbc:script location="classpath:META-INF/core-schema.sql" />
 	</jdbc:embedded-database>
-	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-		<property name="entityManagerFactory" ref="emf" />
-	</bean>
-	<tx:annotation-driven transaction-manager="transactionManager" />
-	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	<bean id="authorMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
-		<property name="mapperInterface" value="org.mybatis.spring.sample.mapper.UserMapper" />
-		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
-	</bean>
-	<context:component-scan base-package="org.lliira.bookworm.core" />
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	<context:component-scan base-package="net.lliira.bookworm.core" />
 </beans>

@@ -6,7 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<cache />
 
-	<resultMap type="Book" id="BookMap">
+	<resultMap type="BookEntity" id="BookMap">
 		<id property="id" column="id" />
 		<result property="name" column="name" />
 		<result property="nameSorted" column="name_sorted" />
@@ -19,20 +19,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<select id="selectBook" parameterType="int" resultMap="BookMap">
     <![CDATA[
-        SELECT * FROM ${core-schema}books WHERE id=#{id}
+        SELECT * FROM books WHERE id=#{id}
     ]]>
 	</select>
 
 	<select id="selectBooksByName" parameterType="string" resultMap="BookMap">
     <![CDATA[
-        SELECT * FROM ${core-schema}books WHERE name LIKE #{pattern}
+        SELECT * FROM books WHERE name LIKE #{pattern}
     ]]>
 	</select>
 
 	<select id="selectBooksByAuthor" parameterType="int" resultMap="BookMap">
     <![CDATA[
         SELECT b.* 
-        FROM ${core-schema}books b, ${core-schema}book_authors ba
+        FROM books b, book_authors ba
         WHERE b.id = ba.book_id AND ba.author_id = #{authorId}
     ]]>
 	</select>
@@ -40,7 +40,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="selectBooksByCategories" parameterType="int" resultMap="BookMap">
         SELECT DISTINCT b.book_id, b.book_key, b.book_name, b.original, 
         	   b.publish_date, b.description
-        FROM ${core-schema}books b, ${core-schema}book_categories bc
+        FROM books b, book_categories bc
         WHERE b.book_id = bc.book_id
           AND bc.category_id IN
     		 <foreach item="categoryId" index="index" collection="list" open="(" separator="," close=")">
@@ -48,17 +48,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			 </foreach>
 	</select>
 
-	<insert id="insertBook" parameterType="Book" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+	<insert id="insertBook" parameterType="BookEntity" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
     <![CDATA[
-        INSERT INTO ${core-schema}books
+        INSERT INTO books
                (name, name_sorted, publish_date, collect_time, goodreads_url, goodreads_rank, summary)
         VALUES (#{name}, #{nameSorted}, #{publishDate}, #{goodreadsUrl}, #{goodreadsRank}, #{summary})
     ]]>
 	</insert>
 
-	<update id="updateBook" parameterType="Book">
+	<update id="updateBook" parameterType="BookEntity">
     <![CDATA[
-        UPDATE ${core-schema}books
+        UPDATE books
         SET name = #{name}, name_sorted = #{nameSorted}, publish_date = #{publishDate}, 
             collect_time = #{collectTime}, goodreads_url = #{goodreadsUrl}, goodreads_rank = #{goodreadsRank},
             summary = #{summary}
@@ -68,7 +68,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<delete id="deleteBook" parameterType="int">
     <![CDATA[
-        DELETE FROM ${core-schema}books WHERE id = #{id}
+        DELETE FROM books WHERE id = #{id}
     ]]>
 	</delete>
 

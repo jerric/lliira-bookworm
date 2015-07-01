@@ -1,6 +1,13 @@
 package net.lliira.bookworm.core.persist.entity;
 
-public class CategoryEntity {
+import java.io.Serializable;
+
+public class CategoryEntity implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private Integer id;
 	private String name;

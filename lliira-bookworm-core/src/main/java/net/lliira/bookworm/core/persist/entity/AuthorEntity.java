@@ -1,7 +1,14 @@
 package net.lliira.bookworm.core.persist.entity;
 
-public class AuthorEntity {
+import java.io.Serializable;
 
+public class AuthorEntity implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private Integer id;
 	private String name;
 	private String description;

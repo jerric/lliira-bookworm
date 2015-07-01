@@ -4,36 +4,36 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="net.lliira.bookworm.core.persist.mapper.BookAuthorMapper">
 
-	<insert id="insert" parameterType="BookAuthor"  useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+	<insert id="insert" parameterType="BookAuthorEntity"  useGeneratedKeys="true" keyProperty="id" keyColumn="id">
     <![CDATA[
-		INSERT INTO ${core-schema}book_authors (book_id, author_id) VALUES (#{bookId}, #{authorId)
+		INSERT INTO book_authors (book_id, author_id) VALUES (#{bookId}, #{authorId)
     ]]>
 	</insert>
 
-	<delete id="delete" parameterType="BookAuthor">
+	<delete id="delete" parameterType="BookAuthorEntity">
     <![CDATA[
-		DELETE FROM ${core-schema}book_authors WHERE id = #{id}
+		DELETE FROM book_authors WHERE id = #{id}
     ]]>
 	</delete>
 
 	<delete id="deleteByList" parameterType="List">
     <![CDATA[
-		DELETE FROM ${core-schema}book_authors WHERE id IN
+		DELETE FROM book_authors WHERE id IN
 		<foreach item="bookAuthor" index="index" collection="list" open="(" separator="," close=")">
 	        #{bookAuthor.id}
 	   </foreach>
     ]]>
 	</delete>
 
-	<delete id="deleteByAuthor" parameterType="Author">
+	<delete id="deleteByAuthor" parameterType="AuthorEntity">
     <![CDATA[
-		DELETE FROM ${core-schema}book_authors WHERE author_id = #{id}
+		DELETE FROM book_authors WHERE author_id = #{id}
     ]]>
 	</delete>
 
-	<delete id="deleteByBook" parameterType="Book">
+	<delete id="deleteByBook" parameterType="BookEntity">
     <![CDATA[
-		DELETE FROM ${core-schema}book_authors WHERE book_id = #{id}
+		DELETE FROM book_authors WHERE book_id = #{id}
     ]]>
 	</delete>
 
