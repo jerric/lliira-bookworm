@@ -6,7 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<insert id="insert" parameterType="BookAuthorEntity"  useGeneratedKeys="true" keyProperty="id" keyColumn="id">
     <![CDATA[
-		INSERT INTO book_authors (book_id, author_id) VALUES (#{bookId}, #{authorId)
+		INSERT INTO book_authors (book_id, author_id) VALUES (#{bookId}, #{authorId})
     ]]>
 	</insert>
 

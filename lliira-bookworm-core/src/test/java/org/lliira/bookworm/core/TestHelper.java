@@ -12,7 +12,7 @@ public class TestHelper {
 
 	public static ApplicationContext getContext() {
 		if (context == null) {
-			synchronized (ApplicationContext.class) {
+			synchronized (TestHelper.class) {
 				if (context == null) {
 					GenericXmlApplicationContext context = new GenericXmlApplicationContext();
 					context.load("classpath:META-INF/app-context.xml");

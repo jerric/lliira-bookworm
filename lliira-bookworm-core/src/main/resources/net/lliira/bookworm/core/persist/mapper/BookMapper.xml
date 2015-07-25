@@ -9,67 +9,71 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<resultMap type="BookEntity" id="BookMap">
 		<id property="id" column="id" />
 		<result property="name" column="name" />
-		<result property="nameSorted" column="name_sorted" />
 		<result property="publishDate" column="publish_date" />
-		<result property="collectTime" column="collect_time" />
-		<result property="goodreadsUrl" column="goodreads_url" />
-		<result property="goodreadsRank" column="goodreads_rank" />
-		<result property="summary" column="summary" />
+		<result property="description" column="description" />
 	</resultMap>
 
-	<select id="selectBook" parameterType="int" resultMap="BookMap">
+	<insert id="insert" parameterType="BookEntity" useGeneratedKeys="true"
+		keyProperty="id" keyColumn="id">
+    <![CDATA[
+        INSERT INTO books (name, publish_date,description) VALUES (#{name}, #{publishDate}, #{description})
+    ]]>
+	</insert>
+
+	<update id="update" parameterType="BookEntity">
+    <![CDATA[
+        UPDATE books
+        SET name = #{name}, publish_date = #{publishDate}, description = #{description}
+        WHERE id = #{id}
+    ]]>
+	</update>
+
+	<delete id="delete" parameterType="int">
+    <![CDATA[
+        DELETE FROM books WHERE id = #{id}
+    ]]>
+	</delete>
+
+	<select id="select" parameterType="int" resultMap="BookMap">
     <![CDATA[
         SELECT * FROM books WHERE id=#{id}
     ]]>
 	</select>
 
-	<select id="selectBooksByName" parameterType="string" resultMap="BookMap">
+	<select id="selectByName" parameterType="string" resultMap="BookMap">
     <![CDATA[
         SELECT * FROM books WHERE name LIKE #{pattern}
     ]]>
 	</select>
 
-	<select id="selectBooksByAuthor" parameterType="int" resultMap="BookMap">
+	<select id="selectByAuthor" parameterType="AuthorEntity"
+		resultMap="BookMap">
     <![CDATA[
         SELECT b.* 
         FROM books b, book_authors ba
-        WHERE b.id = ba.book_id AND ba.author_id = #{authorId}
+        WHERE b.id = ba.book_id AND ba.author_id = #{id}
     ]]>
 	</select>
 
-	<select id="selectBooksByCategories" parameterType="int" resultMap="BookMap">
-        SELECT DISTINCT b.book_id, b.book_key, b.book_name, b.original, 
-        	   b.publish_date, b.description
-        FROM books b, book_categories bc
-        WHERE b.book_id = bc.book_id
-          AND bc.category_id IN
-    		 <foreach item="categoryId" index="index" collection="list" open="(" separator="," close=")">
-			   #{categoryId}
-			 </foreach>
+	<select id="selectByCategory" parameterType="CategoryEntity"
+		resultMap="BookMap">
+    <![CDATA[
+        SELECT b.* 
+        FROM books b, category_books cb
+        WHERE b.id = cb.book_id AND cb.category_id = #{id}
+    ]]>
 	</select>
 
-	<insert id="insertBook" parameterType="BookEntity" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-    <![CDATA[
-        INSERT INTO books
-               (name, name_sorted, publish_date, collect_time, goodreads_url, goodreads_rank, summary)
-        VALUES (#{name}, #{nameSorted}, #{publishDate}, #{goodreadsUrl}, #{goodreadsRank}, #{summary})
-    ]]>
-	</insert>
-
-	<update id="updateBook" parameterType="BookEntity">
-    <![CDATA[
-        UPDATE books
-        SET name = #{name}, name_sorted = #{nameSorted}, publish_date = #{publishDate}, 
-            collect_time = #{collectTime}, goodreads_url = #{goodreadsUrl}, goodreads_rank = #{goodreadsRank},
-            summary = #{summary}
-        WHERE id = #{id}
-    ]]>
-	</update>
-
-	<delete id="deleteBook" parameterType="int">
-    <![CDATA[
-        DELETE FROM books WHERE id = #{id}
-    ]]>
-	</delete>
+	<select id="selectByCategories" parameterType="list" resultMap="BookMap">
+		SELECT DISTINCT b.book_id, b.book_key, b.book_name, b.original,
+		b.publish_date, b.description
+		FROM books b, book_categories bc
+		WHERE b.id = bc.book_id
+		AND bc.category_id IN
+		<foreach item="categoryId" index="index" collection="list"
+			open="(" separator="," close=")">
+			#{categoryId}
+		</foreach>
+	</select>
 
 </mapper>

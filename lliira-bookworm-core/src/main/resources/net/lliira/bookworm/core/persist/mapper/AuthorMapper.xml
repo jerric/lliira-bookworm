@@ -42,14 +42,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<select id="selectByName" parameterType="string" resultMap="AuthorMap">
     <![CDATA[
-        SELECT * FROM authors WHERE name = #{name}
+        SELECT * FROM authors WHERE name LIKE #{name}
     ]]>
 	</select>
 
 	<select id="selectByBook" parameterType="BookEntity" resultMap="AuthorMap">
     <![CDATA[
-        SELECT a.* FROM authors a, book_authors ba 
-        WHERE a.author_id = ba.author_id AND ba.book_id = #{id}
+        SELECT a.* FROM authors a, book_authors ba WHERE a.id = ba.author_id AND ba.book_id = #{id}
     ]]>
 	</select>
 
