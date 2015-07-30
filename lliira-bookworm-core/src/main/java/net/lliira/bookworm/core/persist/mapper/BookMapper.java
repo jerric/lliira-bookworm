@@ -14,7 +14,7 @@ public interface BookMapper {
 	
 	int delete(BookEntity book);
 	
-	BookEntity selete(int id);
+	BookEntity select(int id);
 	
 	List<BookEntity> selectByName(String pattern);
 	

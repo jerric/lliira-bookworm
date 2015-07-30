@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import net.lliira.bookworm.core.persist.entity.AuthorEntity;
 import net.lliira.bookworm.core.persist.entity.BookAuthorEntity;
@@ -14,32 +13,20 @@ import net.lliira.bookworm.core.persist.mapper.BookAuthorMapper;
 
 import org.lliira.bookworm.core.TestHelper;
 import org.lliira.bookworm.core.persist.PersistTestHelper;
-import org.springframework.transaction.TransactionStatus;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-public class AuthorMapperTest {
+public class AuthorMapperTest extends AbstractTest {
 
-	private static final Random random = TestHelper.getRandom();
-	
-	private TransactionStatus status;
 	private AuthorMapper authorMapper;
 	
 
 	@BeforeMethod
-	public void setUp() {
-		status = PersistTestHelper.beginTransaction();
+	public void prepareMapper() {
 		authorMapper = TestHelper.get(AuthorMapper.class);
 	}
 	
-	@AfterMethod
-	public void shutdown() {
-		PersistTestHelper.rollback(status);
-	}
-	
-
 	@Test
 	public void testInsert() {
 		String name = "name-" + random.nextInt();
@@ -95,7 +82,7 @@ public class AuthorMapperTest {
 		BookEntity book1 = PersistTestHelper.createBook();
 		BookEntity book2 = PersistTestHelper.createBook();
 
-		BookAuthorMapper bookAuthorMapper = TestHelper.getContext().getBean(BookAuthorMapper.class);
+		BookAuthorMapper bookAuthorMapper = TestHelper.get(BookAuthorMapper.class);
 
 		BookAuthorEntity book1Author1 = new BookAuthorEntity(book1.getId(), author1.getId());
 		BookAuthorEntity book1Author2 = new BookAuthorEntity(book1.getId(), author2.getId());
