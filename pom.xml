@@ -39,6 +39,11 @@
 
 	<dependencyManagement>
 		<dependencies>
+		    <dependency>
+                <groupId>org.lliira.bookworm</groupId>
+                <artifactId>lliira-bookworm-core</artifactId>
+                <version>2.2.1.RELEASE</version>
+            </dependency>
 			<dependency>
 				<groupId>log4j</groupId>
 				<artifactId>log4j</artifactId>

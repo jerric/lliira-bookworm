@@ -22,7 +22,7 @@ public class Book {
 		return id;
 	}
 
-	public void setId() {
+	public void setId(final long id) {
 		this.id = id;
 	}
 
