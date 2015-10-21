@@ -1,6 +1,6 @@
 package net.lliira.bookworm.core.persist;
 
-import net.lliira.bookworm.core.persist.entity.AuthorEntity;
+import net.lliira.bookworm.core.persist.model.AuthorEntity;
 
 public class AuthorStorage {
 

@@ -2,9 +2,9 @@ package net.lliira.bookworm.core.persist.mapper;
 
 import java.util.List;
 
-import net.lliira.bookworm.core.persist.entity.AuthorEntity;
-import net.lliira.bookworm.core.persist.entity.BookEntity;
-import net.lliira.bookworm.core.persist.entity.CategoryEntity;
+import net.lliira.bookworm.core.persist.model.AuthorEntity;
+import net.lliira.bookworm.core.persist.model.BookEntity;
+import net.lliira.bookworm.core.persist.model.CategoryEntity;
 
 public interface BookMapper {
 

@@ -1,15 +1,15 @@
 package org.lliira.bookworm.core.persist.mapper;
 
-import net.lliira.bookworm.core.persist.entity.AuthorEntity;
-import net.lliira.bookworm.core.persist.entity.BookAuthorEntity;
-import net.lliira.bookworm.core.persist.entity.BookEntity;
-import net.lliira.bookworm.core.persist.mapper.BookAuthorMapper;
-
-import org.lliira.bookworm.core.TestHelper;
 import org.lliira.bookworm.core.persist.PersistTestHelper;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import net.lliira.bookworm.core.BookwormHelper;
+import net.lliira.bookworm.core.persist.mapper.BookAuthorMapper;
+import net.lliira.bookworm.core.persist.model.AuthorEntity;
+import net.lliira.bookworm.core.persist.model.BookAuthorEntity;
+import net.lliira.bookworm.core.persist.model.BookEntity;
 
 public class BookAuthorMapperTest extends AbstractTest {
 
@@ -17,7 +17,7 @@ public class BookAuthorMapperTest extends AbstractTest {
 
 	@BeforeMethod
 	public void prepareMapper() {
-		bookAuthorMapper = TestHelper.get(BookAuthorMapper.class);
+		bookAuthorMapper = BookwormHelper.get(BookAuthorMapper.class);
 	}
 
 	@Test

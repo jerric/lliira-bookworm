@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lliira.bookworm.calibre.mapper.CalibreMapper">
+
+	<cache />
+    
+    <resultMap type="CalibreLibrary" id="LibraryMap">
+        <id property="id" column="id" />
+        <result property="uuid" column="uuid" />
+    </resultMap>
+    
+    <resultMap type="CalibreSeries" id="SeriesMap">
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="nameSorted" column="sort" />
+    </resultMap>
+    
+    <resultMap type="CalibreBook" id="BookMap">
+        <id property="id" column="id" />
+        <result property="title" column="title" />
+        <result property="titleSorted" column="sort" />
+    </resultMap>
+    
+    <resultMap type="CalibreAuthor" id="AuthorMap">
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="nameSorted" column="sorted" />
+    </resultMap>
+
+    <select id="selectLibrary" resultMap="LibraryMap">
+    <![CDATA[
+        SELECT * FROM library_id
+    ]]>
+    </select>
+
+    <select id="selectReadColumnIndex" resultType="int">
+    <![CDATA[
+        SELECT id FROM custom_columns WHERE label = 'read'
+    ]]>
+    </select>
+
+	<select id="selectSeries" resultMap="SeriesMap">
+    <![CDATA[
+        SELECT * FROM categories
+    ]]>
+	</select>
+
+	<select id="selectBooks" parameterType="int" resultMap="BookMap">
+    <![CDATA[
+        SELECT b.id, b.title, b.sort 
+        FROM books b, book_series_link bs
+        WHERE b.id = bs.book AND bs.series = #{seriesId}
+    ]]>
+	</select>
+
+    <select id="selectAuthors" parameterType="int" resultMap="BookMap">
+    <![CDATA[
+        SELECT b.id, b.title, b.sort 
+        FROM books b, book_series_link bs
+        WHERE b.id = bs.book AND bs.series = #{seriesId}
+    ]]>
+    </select>
+
+	<select id="selectReadBooks" parameterType="_int" resultType="int">
+    <![CDATA[
+        SELECT book FROM custom_column_${columnIndex} WHERE value = 1
+    ]]>
+	</select>
+
+</mapper>

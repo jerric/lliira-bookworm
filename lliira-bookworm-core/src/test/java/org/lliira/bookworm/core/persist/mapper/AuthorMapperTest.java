@@ -5,17 +5,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.lliira.bookworm.core.persist.entity.AuthorEntity;
-import net.lliira.bookworm.core.persist.entity.BookAuthorEntity;
-import net.lliira.bookworm.core.persist.entity.BookEntity;
-import net.lliira.bookworm.core.persist.mapper.AuthorMapper;
-import net.lliira.bookworm.core.persist.mapper.BookAuthorMapper;
-
-import org.lliira.bookworm.core.TestHelper;
 import org.lliira.bookworm.core.persist.PersistTestHelper;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import net.lliira.bookworm.core.BookwormHelper;
+import net.lliira.bookworm.core.persist.mapper.AuthorMapper;
+import net.lliira.bookworm.core.persist.mapper.BookAuthorMapper;
+import net.lliira.bookworm.core.persist.model.AuthorEntity;
+import net.lliira.bookworm.core.persist.model.BookAuthorEntity;
+import net.lliira.bookworm.core.persist.model.BookEntity;
 
 public class AuthorMapperTest extends AbstractTest {
 
@@ -24,7 +24,7 @@ public class AuthorMapperTest extends AbstractTest {
 
 	@BeforeMethod
 	public void prepareMapper() {
-		authorMapper = TestHelper.get(AuthorMapper.class);
+		authorMapper = BookwormHelper.get(AuthorMapper.class);
 	}
 	
 	@Test
@@ -82,7 +82,7 @@ public class AuthorMapperTest extends AbstractTest {
 		BookEntity book1 = PersistTestHelper.createBook();
 		BookEntity book2 = PersistTestHelper.createBook();
 
-		BookAuthorMapper bookAuthorMapper = TestHelper.get(BookAuthorMapper.class);
+		BookAuthorMapper bookAuthorMapper = BookwormHelper.get(BookAuthorMapper.class);
 
 		BookAuthorEntity book1Author1 = new BookAuthorEntity(book1.getId(), author1.getId());
 		BookAuthorEntity book1Author2 = new BookAuthorEntity(book1.getId(), author2.getId());

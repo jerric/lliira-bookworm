@@ -5,10 +5,9 @@ import java.util.List;
 import org.lliira.bookworm.calibre.model.CalibreAuthor;
 import org.lliira.bookworm.calibre.model.CalibreBook;
 import org.lliira.bookworm.calibre.model.CalibreLibrary;
-import org.lliira.bookworm.calibre.model.CalibreReadFlag;
 import org.lliira.bookworm.calibre.model.CalibreSeries;
 
-public interface CalibreMapper {
+public interface CalibreDBMapper {
 
 	CalibreLibrary selectLibrary();
 	
@@ -16,9 +15,9 @@ public interface CalibreMapper {
 	
 	List<CalibreSeries> selectSeries();
 	
-	List<CalibreBook> selectBooks(int seriesId);
+	List<CalibreBook> selectBooks(final int seriesId);
 	
-	List<CalibreAuthor> selectAuthors(int bookId);
+	List<CalibreAuthor> selectAuthors(final int bookId);
 
-	boolean selectReadFlag(CalibreReadFlag flag);
+	List<Integer> selectReadBooks(final int columnId);
 }

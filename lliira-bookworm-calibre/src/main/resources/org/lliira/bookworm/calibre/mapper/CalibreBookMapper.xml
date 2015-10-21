@@ -35,10 +35,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     ]]>
     </select>
 
-    <select id="selectCustomColumn" resultType="int">
+    <select id="selectReadColumnIndex" resultType="int">
     <![CDATA[
         SELECT id FROM custom_columns WHERE label = 'read'
     ]]>
+    </select>
 
 	<select id="selectSeries" resultMap="SeriesMap">
     <![CDATA[
@@ -46,7 +47,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     ]]>
 	</select>
 
-	<select id="selectBooks" parameterType="int" resultType="BookMap">
+	<select id="selectBooks" parameterType="int" resultMap="BookMap">
     <![CDATA[
         SELECT b.id, b.title, b.sort 
         FROM books b, book_series_link bs
@@ -54,9 +55,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     ]]>
 	</select>
 
-	<select id="selectReadflags" parameterType="int" resultMap="Map">
+    <select id="selectAuthors" parameterType="int" resultMap="BookMap">
     <![CDATA[
-        SELECT * FROM custom_column_${columnIndex}
+        SELECT b.id, b.title, b.sort 
+        FROM books b, book_series_link bs
+        WHERE b.id = bs.book AND bs.series = #{seriesId}
+    ]]>
+    </select>
+
+	<select id="selectReadBooks" parameterType="_int" resultType="int">
+    <![CDATA[
+        SELECT book FROM custom_column_${columnIndex} WHERE value = 1
     ]]>
 	</select>
 

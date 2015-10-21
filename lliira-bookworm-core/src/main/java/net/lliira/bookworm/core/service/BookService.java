@@ -1,7 +1,10 @@
-package net.lliira.bookworm.core;
+package net.lliira.bookworm.core.service;
 
 import java.util.List;
 import java.util.Locale.Category;
+
+import net.lliira.bookworm.core.model.Author;
+import net.lliira.bookworm.core.model.Book;
 
 public class BookService {
 

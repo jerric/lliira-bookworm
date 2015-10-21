@@ -4,52 +4,52 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="net.lliira.bookworm.core.persist.mapper.AuthorMapper">
 
-	<cache />
-	
-	<resultMap type="AuthorEntity" id="AuthorMap">
-		<id property="id" column="id" />
-		<result property="name" column="name" />
-		<result property="description" column="description" />
-	</resultMap>
+  <cache />
 
-	<insert id="insert" parameterType="AuthorEntity" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+  <resultMap type="AuthorEntity" id="AuthorMap">
+    <id property="id" column="id" />
+    <result property="name" column="name" />
+    <result property="description" column="description" />
+  </resultMap>
+
+  <insert id="insert" parameterType="AuthorEntity" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
     <![CDATA[
         INSERT INTO authors 
         			(name, description)
         VALUES (#{name}, #{description})
     ]]>
-	</insert>
+  </insert>
 
-	<update id="update" parameterType="AuthorEntity">
+  <update id="update" parameterType="AuthorEntity">
     <![CDATA[
         UPDATE authors
         SET name = #{name}, description = #{description}
         WHERE id = #{id}
     ]]>
-	</update>
+  </update>
 
-	<delete id="delete" parameterType="AuthorEntity">
+  <delete id="delete" parameterType="AuthorEntity">
     <![CDATA[
         DELETE FROM authors WHERE id = #{id}
     ]]>
-	</delete>
+  </delete>
 
-	<select id="select" parameterType="int" resultMap="AuthorMap">
+  <select id="select" parameterType="int" resultMap="AuthorMap">
     <![CDATA[
         SELECT * FROM authors WHERE id = #{id}
     ]]>
-	</select>
+  </select>
 
-	<select id="selectByName" parameterType="string" resultMap="AuthorMap">
+  <select id="selectByName" parameterType="string" resultMap="AuthorMap">
     <![CDATA[
         SELECT * FROM authors WHERE name LIKE #{name}
     ]]>
-	</select>
+  </select>
 
-	<select id="selectByBook" parameterType="BookEntity" resultMap="AuthorMap">
+  <select id="selectByBook" parameterType="BookEntity" resultMap="AuthorMap">
     <![CDATA[
         SELECT a.* FROM authors a, book_authors ba WHERE a.id = ba.author_id AND ba.book_id = #{id}
     ]]>
-	</select>
+  </select>
 
 </mapper>
