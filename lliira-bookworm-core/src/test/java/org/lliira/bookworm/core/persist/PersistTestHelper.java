@@ -29,6 +29,7 @@ public class PersistTestHelper {
 		Random random = TestHelper.getRandom();
 		BookEntity book = new BookEntity();
 		book.setName("book-name-" + random.nextInt());
+		book.setSortedName("sorted-name-" + random.nextInt());
 		book.setDescription("book-desc-" + random.nextInt());
 
 		Calendar calendar = Calendar.getInstance();

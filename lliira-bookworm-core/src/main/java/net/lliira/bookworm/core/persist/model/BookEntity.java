@@ -44,6 +44,7 @@ public class BookEntity implements Serializable {
      */
     public void setName(String name) {
         this.name = name;
+        this.sortedName = name;
     }
 
     public String getSortedName() {

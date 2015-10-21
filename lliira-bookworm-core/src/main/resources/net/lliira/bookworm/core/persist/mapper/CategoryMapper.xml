@@ -4,36 +4,36 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="net.lliira.bookworm.core.persist.mapper.CategoryMapper">
 
-	<cache />
-	
-	<resultMap type="CategoryEntity" id="CategoryMap">
-		<id property="id" column="id" />
-		<result property="name" column="name" />
-		<result property="parentId" column="parent_id" />
-		<result property="sortIndex" column="sort_index" />
-		<result property="description" column="description" />
-	</resultMap>
+  <cache />
 
-	<select id="selectCategory" parameterType="int" resultMap="CategoryMap">
+  <resultMap type="CategoryEntity" id="CategoryMap">
+    <id property="id" column="id" />
+    <result property="name" column="name" />
+    <result property="parentId" column="parent_id" />
+    <result property="siblingIndex" column="sibling_index" />
+    <result property="description" column="description" />
+  </resultMap>
+
+  <select id="selectCategory" parameterType="int" resultMap="CategoryMap">
     <![CDATA[
         SELECT * FROM categories WHERE id = #{id}
     ]]>
-	</select>
+  </select>
 
-	<select id="selectCategoriesByParent" parameterType="int" resultMap="CategoryMap">
+  <select id="selectCategoriesByParent" parameterType="int" resultMap="CategoryMap">
     <![CDATA[
-        SELECT * FROM categories WHERE parent_id = #{parentId} ORDER BY sort_idnex ASC
+        SELECT * FROM categories WHERE parent_id = #{parentId} ORDER BY sibling_index ASC
     ]]>
-	</select>
+  </select>
 
-	<select id="selectCategoriesByBook" parameterType="int" resultMap="CategoryMap">
+  <select id="selectCategoriesByBook" parameterType="int" resultMap="CategoryMap">
     <![CDATA[
         SELECT c.* FROM categories c, book_categories bc
         WHERE c.id = bc.category_id AND bc.book_id = #{bookId}
     ]]>
-	</select>
+  </select>
 
-	<select id="selectDescendantCategories" parameterType="int" resultMap="CategoryMap">
+  <select id="selectDescendantCategories" parameterType="int" resultMap="CategoryMap">
     <![CDATA[
         WITH RECURSIVE descendants (id) AS (
             SELECT id FROM categories WHERE id = #{id}
@@ -41,28 +41,31 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             SELECT c.id FROM categories c, descendants d WHERE c.parent_id = d.id
         )
         SELECT * FROM categories WHERE id IN (SELECT id FROM descendants)
+        ORDER BY parent_id ASC, sibling_index ASC
     ]]>
-	</select>
+  </select>
 
-	<insert id="insertCategory" parameterType="CategoryEntity" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+  <insert id="insertCategory" parameterType="CategoryEntity" useGeneratedKeys="true" keyProperty="id"
+    keyColumn="id">
     <![CDATA[
-        INSERT INTO categories (name, parent_id, sort_index, description)
-        VALUES (#{name}, #{parentId}, #{sortIndex}, #{description})
+        INSERT INTO categories (name, parent_id, sibling_index, description)
+        VALUES (#{name}, #{parentId}, #{siblingIndex}, #{description})
     ]]>
-	</insert>
+  </insert>
 
-	<update id="updateCategory" parameterType="CategoryEntity">
+  <update id="updateCategory" parameterType="CategoryEntity">
     <![CDATA[
         UPDATE categories
-        SET name = #{name}, parent_id = #{parentId}, sort_index = #{sortIndex}, description = #{description}
+        SET name = #{name}, parent_id = #{parentId}, sibling_index = #{siblingIndex}, 
+            description = #{description}
         WHERE id = #{id}
     ]]>
-	</update>
+  </update>
 
-	<delete id="deleteCategory" parameterType="int">
+  <delete id="deleteCategory" parameterType="int">
     <![CDATA[
         DELETE FROM categories WHERE id = #{id}
     ]]>
-	</delete>
+  </delete>
 
 </mapper>

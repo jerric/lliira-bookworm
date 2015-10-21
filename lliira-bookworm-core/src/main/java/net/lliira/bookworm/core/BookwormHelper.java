@@ -8,14 +8,22 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 public class BookwormHelper {
+    
+    private static String contextPath = "classpath:META-INF/app-context.xml";
+    
     private static ApplicationContext context;
+    
+    public synchronized static void setContextString(final String contextPath) {
+        BookwormHelper.contextPath = contextPath;
+        BookwormHelper.context = null;
+    }
 
     public static ApplicationContext getContext() {
         if (BookwormHelper.context == null) {
             synchronized (BookwormHelper.class) {
                 if (BookwormHelper.context == null) {
                     final GenericXmlApplicationContext context = new GenericXmlApplicationContext();
-                    context.load("classpath:META-INF/app-context.xml");
+                    context.load(contextPath);
                     context.refresh();
                     BookwormHelper.context = context;
                 }
@@ -29,11 +37,12 @@ public class BookwormHelper {
     }
 
     public static Transaction beginTransaction() {
+        final PlatformTransactionManager transactionManager = BookwormHelper
+                .get(PlatformTransactionManager.class);
+
         final DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
         definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 
-        final PlatformTransactionManager transactionManager = BookwormHelper
-                .get(PlatformTransactionManager.class);
         final TransactionStatus transactionStatus = transactionManager.getTransaction(definition);
         return new Transaction(transactionStatus);
     }

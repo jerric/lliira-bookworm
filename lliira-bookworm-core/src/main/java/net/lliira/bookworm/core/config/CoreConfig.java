@@ -1,4 +1,4 @@
-package net.lliira.bookworm.core;
+package net.lliira.bookworm.core.config;
 
 import javax.sql.DataSource;
 
@@ -16,7 +16,7 @@ public class CoreConfig {
 	public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
 	    SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
 	    sessionFactory.setDataSource(dataSource);
-	    sessionFactory.setTypeAliasesPackage("net.lliira.bookworm.core.persist.entity");
+	    sessionFactory.setTypeAliasesPackage("net.lliira.bookworm.core.persist.model");
 	    return sessionFactory.getObject();
 	}
 }

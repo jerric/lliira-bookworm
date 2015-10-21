@@ -4,7 +4,6 @@ public class Category {
 
     private final int id;
     private String name;
-    private String sortedName;
     private Category parent;
     private int siblingIndex;
     private String description;
@@ -48,14 +47,6 @@ public class Category {
      */
     public int getId() {
         return id;
-    }
-
-    public String getSortedName() {
-        return this.sortedName;
-    }
-
-    public void setSortedName(String sortedName) {
-        this.sortedName = sortedName;
     }
 
     public int getSiblingIndex() {

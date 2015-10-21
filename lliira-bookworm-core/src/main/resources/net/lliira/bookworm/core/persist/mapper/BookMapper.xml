@@ -4,76 +4,76 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="net.lliira.bookworm.core.persist.mapper.BookMapper">
 
-	<cache />
+  <cache />
 
-	<resultMap type="BookEntity" id="BookMap">
-		<id property="id" column="id" />
-		<result property="name" column="name" />
-		<result property="publishDate" column="publish_date" />
-		<result property="description" column="description" />
-	</resultMap>
+  <resultMap type="BookEntity" id="BookMap">
+    <id property="id" column="id" />
+    <result property="name" column="name" />
+    <result property="sortedName" column="sorted_name" />
+    <result property="publishDate" column="publish_date" />
+    <result property="description" column="description" />
+  </resultMap>
 
-	<insert id="insert" parameterType="BookEntity" useGeneratedKeys="true"
-		keyProperty="id" keyColumn="id">
+  <insert id="insert" parameterType="BookEntity" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
     <![CDATA[
-        INSERT INTO books (name, publish_date,description) VALUES (#{name}, #{publishDate}, #{description})
+        INSERT INTO books (name, sorted_name, publish_date,description) 
+        VALUES (#{name}, #{sortedName}, #{publishDate}, #{description})
     ]]>
-	</insert>
+  </insert>
 
-	<update id="update" parameterType="BookEntity">
+  <update id="update" parameterType="BookEntity">
     <![CDATA[
         UPDATE books
-        SET name = #{name}, publish_date = #{publishDate}, description = #{description}
+        SET name = #{name}, sorted_name = #{sortedName}, publish_date = #{publishDate}, 
+            description = #{description}
         WHERE id = #{id}
     ]]>
-	</update>
+  </update>
 
-	<delete id="delete" parameterType="int">
+  <delete id="delete" parameterType="int">
     <![CDATA[
         DELETE FROM books WHERE id = #{id}
     ]]>
-	</delete>
+  </delete>
 
-	<select id="select" parameterType="int" resultMap="BookMap">
+  <select id="select" parameterType="int" resultMap="BookMap">
     <![CDATA[
         SELECT * FROM books WHERE id=#{id}
     ]]>
-	</select>
+  </select>
 
-	<select id="selectByName" parameterType="string" resultMap="BookMap">
+  <select id="selectByName" parameterType="string" resultMap="BookMap">
     <![CDATA[
         SELECT * FROM books WHERE name LIKE #{pattern}
     ]]>
-	</select>
+  </select>
 
-	<select id="selectByAuthor" parameterType="AuthorEntity"
-		resultMap="BookMap">
+  <select id="selectByAuthor" parameterType="AuthorEntity" resultMap="BookMap">
     <![CDATA[
         SELECT b.* 
         FROM books b, book_authors ba
         WHERE b.id = ba.book_id AND ba.author_id = #{id}
     ]]>
-	</select>
+  </select>
 
-	<select id="selectByCategory" parameterType="CategoryEntity"
-		resultMap="BookMap">
+  <select id="selectByCategory" parameterType="CategoryEntity" resultMap="BookMap">
     <![CDATA[
         SELECT b.* 
         FROM books b, category_books cb
         WHERE b.id = cb.book_id AND cb.category_id = #{id}
     ]]>
-	</select>
+  </select>
 
-	<select id="selectByCategories" parameterType="list" resultMap="BookMap">
-		SELECT DISTINCT b.book_id, b.book_key, b.book_name, b.original,
-		b.publish_date, b.description
-		FROM books b, book_categories bc
-		WHERE b.id = bc.book_id
-		AND bc.category_id IN
-		<foreach item="categoryId" index="index" collection="list"
-			open="(" separator="," close=")">
-			#{categoryId}
-		</foreach>
-	</select>
+  <select id="selectByCategories" parameterType="list" resultMap="BookMap">
+    SELECT DISTINCT b.book_id, b.book_key, b.book_name, b.original,
+    b.publish_date, b.description
+    FROM books b,
+    book_categories bc
+    WHERE b.id = bc.book_id
+    AND bc.category_id IN
+    <foreach item="categoryId" index="index" collection="list" open="(" separator="," close=")">
+      #{categoryId}
+    </foreach>
+  </select>
 
 </mapper>
