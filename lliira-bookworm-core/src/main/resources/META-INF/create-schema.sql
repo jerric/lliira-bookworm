@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS categories (
 	id	INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(100) NOT NULL,
 	parent_id INT,
-	sibling_index INT NOT NULL,
+	sibling_index DECIMAL(5,2) NOT NULL,
 	description TEXT,
 	UNIQUE (parent_id, sibling_index)
 );

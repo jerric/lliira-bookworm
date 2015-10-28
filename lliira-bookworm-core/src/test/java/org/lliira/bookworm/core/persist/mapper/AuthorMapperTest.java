@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.lliira.bookworm.core.persist.PersistTestHelper;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -23,7 +24,7 @@ public class AuthorMapperTest extends AbstractTest {
 
     @BeforeMethod
     public void prepareMapper() {
-        authorMapper = BookwormHelper.get(AuthorMapper.class);
+        this.authorMapper = BookwormHelper.get(AuthorMapper.class);
     }
 
     @Test
@@ -45,6 +46,16 @@ public class AuthorMapperTest extends AbstractTest {
         // test get to make sure insert succeeded.
         author = authorMapper.select(id);
         compare(author, id, name, description);
+
+        // test insert with null description
+        final String name2 = "name-" + random.nextInt();
+        final AuthorEntity author2 = new AuthorEntity();
+        author2.setName(name2);
+        Assert.assertEquals(this.authorMapper.insert(author2), 1);
+        Assert.assertNotNull(author2.getId());
+        Assert.assertNull(author2.getDescription());
+        final AuthorEntity author3 = this.authorMapper.select(author2.getId());
+        compare(author3, author2);
     }
 
     @Test
@@ -62,6 +73,13 @@ public class AuthorMapperTest extends AbstractTest {
 
         author = authorMapper.select(id);
         compare(author, id, name, description);
+
+        // test update author with null description
+        author.setDescription(null);
+        Assert.assertEquals(this.authorMapper.update(author), 1);
+        Assert.assertNull(author.getDescription());
+        final AuthorEntity author2 = this.authorMapper.select(author.getId());
+        compare(author2, author);
     }
 
     @Test
@@ -135,5 +153,19 @@ public class AuthorMapperTest extends AbstractTest {
         Assert.assertEquals(actual.getName(), name);
         Assert.assertEquals(actual.getDescription(), description);
         if (id != null) Assert.assertEquals(actual.getId(), id);
+    }
+
+    @Test(expectedExceptions = { DataIntegrityViolationException.class })
+    public void testInsertNullName() {
+        final AuthorEntity author = new AuthorEntity();
+        author.setDescription("desc-" + random.nextInt());
+        this.authorMapper.insert(author);
+    }
+
+    @Test(expectedExceptions = { DataIntegrityViolationException.class })
+    public void testUpdateNullName() {
+        final AuthorEntity author = PersistTestHelper.createAuthor();
+        author.setName(null);
+        this.authorMapper.update(author);
     }
 }

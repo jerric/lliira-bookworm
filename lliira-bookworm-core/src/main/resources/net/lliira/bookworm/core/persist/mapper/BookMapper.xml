@@ -68,9 +68,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     SELECT DISTINCT b.book_id, b.book_key, b.book_name, b.original,
     b.publish_date, b.description
     FROM books b,
-    book_categories bc
-    WHERE b.id = bc.book_id
-    AND bc.category_id IN
+    category_books cb
+    WHERE b.id = cb.book_id
+    AND cb.category_id IN
     <foreach item="categoryId" index="index" collection="list" open="(" separator="," close=")">
       #{categoryId}
     </foreach>

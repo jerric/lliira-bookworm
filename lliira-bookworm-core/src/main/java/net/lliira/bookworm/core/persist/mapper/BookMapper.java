@@ -8,19 +8,19 @@ import net.lliira.bookworm.core.persist.model.CategoryEntity;
 
 public interface BookMapper {
 
-	int insert(BookEntity book);
-	
-	int update(BookEntity book);
-	
-	int delete(BookEntity book);
-	
-	BookEntity select(int id);
-	
-	List<BookEntity> selectByName(String pattern);
-	
-	List<BookEntity> selectByAuthor(AuthorEntity author);
-	
-	List<BookEntity> selectByCategory(CategoryEntity category);
-	
-	List<BookEntity> selectByCategories(List<CategoryEntity> categories);
+    int insert(BookEntity book);
+
+    int update(BookEntity book);
+
+    int delete(BookEntity book);
+
+    BookEntity select(int id);
+
+    List<BookEntity> selectByName(String pattern);
+
+    List<BookEntity> selectByAuthor(AuthorEntity author);
+
+    List<BookEntity> selectByCategory(CategoryEntity category);
+
+    List<BookEntity> selectByCategories(List<CategoryEntity> categories);
 }

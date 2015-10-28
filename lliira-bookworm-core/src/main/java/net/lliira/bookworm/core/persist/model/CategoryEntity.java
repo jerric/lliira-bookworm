@@ -11,8 +11,8 @@ public class CategoryEntity implements Serializable {
 
     private Integer id;
     private String name;
-    private Long parentId;
-    private int siblingOrder;
+    private Integer parentId;
+    private float siblingIndex;
     private String description;
 
     /**
@@ -48,7 +48,7 @@ public class CategoryEntity implements Serializable {
     /**
      * @return the parentId
      */
-    public Long getParentId() {
+    public Integer getParentId() {
         return parentId;
     }
 
@@ -56,16 +56,16 @@ public class CategoryEntity implements Serializable {
      * @param parentId
      *            the parentId to set
      */
-    public void setParentId(Long parentId) {
+    public void setParentId(Integer parentId) {
         this.parentId = parentId;
     }
 
-    public int getSiblingOrder() {
-        return this.siblingOrder;
+    public float getSiblingIndex() {
+        return this.siblingIndex;
     }
 
-    public void setSiblingOrder(int siblingOrder) {
-        this.siblingOrder = siblingOrder;
+    public void setSiblingIndex(float siblingIndex) {
+        this.siblingIndex = siblingIndex;
     }
 
     /**

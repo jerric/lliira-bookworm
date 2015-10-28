@@ -8,13 +8,22 @@ import net.lliira.bookworm.core.persist.model.BookEntity;
 
 public interface BookAuthorMapper {
 
-	int insert(BookAuthorEntity bookAuthor);
-	
-	int delete(BookAuthorEntity bookAuthor);
-	
-	int deleteByList(List<BookAuthorEntity> bookAuthors);
-	
-	int deleteByAuthor(AuthorEntity author);
-	
-	int deleteByBook(BookEntity book);
+    BookAuthorEntity select(int id);
+
+    List<BookAuthorEntity> selectByAuthor(AuthorEntity author);
+
+    List<BookAuthorEntity> selectByBook(BookEntity book);
+
+    int insert(BookAuthorEntity bookAuthor);
+
+    int update(BookAuthorEntity bookAuthor);
+
+    int delete(BookAuthorEntity bookAuthor);
+
+    int deleteByList(List<BookAuthorEntity> bookAuthors);
+
+    int deleteByAuthor(AuthorEntity author);
+
+    int deleteByBook(BookEntity book);
+
 }

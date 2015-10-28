@@ -10,46 +10,40 @@ public class BookAuthorEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Integer id;
-    private final Integer bookId;
-    private final Integer authorId;
-
-    /**
-     * @param bookId
-     * @param authorId
-     */
-    public BookAuthorEntity(Integer bookId, Integer authorId) {
-        super();
+    private Integer bookId;
+    private Integer authorId;
+    
+    public BookAuthorEntity(int id) {
+        this.id = id;
+    }
+    
+    public BookAuthorEntity(final int bookId, final int authorId) {
         this.bookId = bookId;
         this.authorId = authorId;
     }
 
-    /**
-     * @return the id
-     */
     public Integer getId() {
-        return id;
+        return this.id;
     }
 
-    /**
-     * @param id
-     *            the id to set
-     */
     public void setId(Integer id) {
         this.id = id;
     }
 
-    /**
-     * @return the bookId
-     */
     public Integer getBookId() {
-        return bookId;
+        return this.bookId;
     }
 
-    /**
-     * @return the authorId
-     */
+    public void setBookId(Integer bookId) {
+        this.bookId = bookId;
+    }
+
     public Integer getAuthorId() {
-        return authorId;
+        return this.authorId;
+    }
+
+    public void setAuthorId(Integer authorId) {
+        this.authorId = authorId;
     }
 
 }

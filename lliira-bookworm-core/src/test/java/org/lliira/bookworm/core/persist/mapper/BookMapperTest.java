@@ -25,7 +25,7 @@ public class BookMapperTest extends AbstractTest {
 
     @BeforeMethod
     public void prepareMapper() {
-        bookMapper = BookwormHelper.get(BookMapper.class);
+        this.bookMapper = BookwormHelper.get(BookMapper.class);
     }
 
     @Test

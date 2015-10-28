@@ -4,12 +4,46 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="net.lliira.bookworm.core.persist.mapper.BookAuthorMapper">
 
+  <cache />
+
+  <resultMap type="BookAuthorEntity" id="BookAuthorMap">
+    <constructor>
+      <idArg column="id" javaType="_int" />
+    </constructor>
+    <result property="bookId" column="book_id" />
+    <result property="authorId" column="author_id" />
+  </resultMap>
+
+  <select id="select" parameterType="int" resultMap="BookAuthorMap">
+    <![CDATA[
+        SELECT * FROM book_authors WHERE id = #{id}
+    ]]>
+  </select>
+
+  <select id="selectByBook" parameterType="BookEntity" resultMap="BookAuthorMap">
+    <![CDATA[
+        SELECT * FROM book_authors WHERE book_id = #{id}
+    ]]>
+  </select>
+
+  <select id="selectByAuthor" parameterType="AuthorEntity" resultMap="BookAuthorMap">
+    <![CDATA[
+        SELECT * FROM book_authors WHERE author_id = #{id}
+    ]]>
+  </select>
+
   <insert id="insert" parameterType="BookAuthorEntity" useGeneratedKeys="true" keyProperty="id"
     keyColumn="id">
     <![CDATA[
 		INSERT INTO book_authors (book_id, author_id) VALUES (#{bookId}, #{authorId})
     ]]>
   </insert>
+
+  <update id="update" parameterType="BookAuthorEntity">
+    <![CDATA[
+        UPDATE book_authors SET book_id = #{bookId}, author_id = #{authorId} WHERE id = #{id}
+    ]]>
+  </update>
 
   <delete id="delete" parameterType="BookAuthorEntity">
     <![CDATA[
@@ -18,12 +52,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   </delete>
 
   <delete id="deleteByList" parameterType="List">
-    <![CDATA[
-		DELETE FROM book_authors WHERE id IN
-		<foreach item="bookAuthor" index="index" collection="list" open="(" separator="," close=")">
-	        #{bookAuthor.id}
-	   </foreach>
-    ]]>
+	DELETE FROM book_authors WHERE id IN
+	<foreach item="bookAuthor" index="index" collection="list" open="(" separator="," close=")">
+        #{bookAuthor.id}
+    </foreach>
   </delete>
 
   <delete id="deleteByAuthor" parameterType="AuthorEntity">

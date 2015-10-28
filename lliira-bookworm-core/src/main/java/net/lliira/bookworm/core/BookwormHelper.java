@@ -47,4 +47,8 @@ public class BookwormHelper {
         return new Transaction(transactionStatus);
     }
 
+    public static void main(String[] args) {
+        long val = Long.MAX_VALUE * 10;
+        System.out.println(val);
+    }
 }

@@ -10,18 +10,20 @@ public class CategoryBookEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Integer id;
-    private final Integer categoryId;
-    private final Integer bookId;
-    private float siblingOrder;
+    private Integer categoryId;
+    private Integer bookId;
+    private float siblingIndex;
+    
+    public CategoryBookEntity(final int id) {
+        this.id = id;
+    }
 
     /**
-     * @param categoryId
-     * @param bookId
      */
-    public CategoryBookEntity(Integer categoryId, Integer bookId) {
-        super();
+    public CategoryBookEntity(int categoryId, int bookId, float siblingIndex) {
         this.categoryId = categoryId;
         this.bookId = bookId;
+        this.siblingIndex = siblingIndex;
     }
 
     /**
@@ -45,6 +47,10 @@ public class CategoryBookEntity implements Serializable {
     public Integer getCategoryId() {
         return categoryId;
     }
+    
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
+    }
 
     /**
      * @return the bookId
@@ -52,12 +58,16 @@ public class CategoryBookEntity implements Serializable {
     public Integer getBookId() {
         return bookId;
     }
-
-    public float getSiblingOrder() {
-        return this.siblingOrder;
+    
+    public void setBookId(Integer bookId) {
+        this.bookId = bookId;
     }
 
-    public void setSiblingOrder(float siblingOrder) {
-        this.siblingOrder = siblingOrder;
+    public float getSiblingIndex() {
+        return this.siblingIndex;
+    }
+
+    public void setSiblingIndex(float siblingIndex) {
+        this.siblingIndex = siblingIndex;
     }
 }
