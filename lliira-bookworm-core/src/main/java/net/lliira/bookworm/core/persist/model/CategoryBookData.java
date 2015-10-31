@@ -2,25 +2,25 @@ package net.lliira.bookworm.core.persist.model;
 
 import java.io.Serializable;
 
-public class CategoryBookEntity implements Serializable {
+public class CategoryBookData implements Serializable {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
 
-    private Integer id;
-    private Integer categoryId;
-    private Integer bookId;
+    private int id;
+    private int categoryId;
+    private int bookId;
     private float siblingIndex;
     
-    public CategoryBookEntity(final int id) {
+    public CategoryBookData(final int id) {
         this.id = id;
     }
 
     /**
      */
-    public CategoryBookEntity(int categoryId, int bookId, float siblingIndex) {
+    public CategoryBookData(int categoryId, int bookId, float siblingIndex) {
         this.categoryId = categoryId;
         this.bookId = bookId;
         this.siblingIndex = siblingIndex;
@@ -29,37 +29,37 @@ public class CategoryBookEntity implements Serializable {
     /**
      * @return the id
      */
-    public Integer getId() {
-        return id;
+    public int getId() {
+        return this.id;
     }
 
     /**
      * @param id
      *            the id to set
      */
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
     /**
      * @return the categoryId
      */
-    public Integer getCategoryId() {
-        return categoryId;
+    public int getCategoryId() {
+        return this.categoryId;
     }
     
-    public void setCategoryId(Integer categoryId) {
+    public void setCategoryId(int categoryId) {
         this.categoryId = categoryId;
     }
 
     /**
      * @return the bookId
      */
-    public Integer getBookId() {
-        return bookId;
+    public int getBookId() {
+        return this.bookId;
     }
     
-    public void setBookId(Integer bookId) {
+    public void setBookId(int bookId) {
         this.bookId = bookId;
     }
 

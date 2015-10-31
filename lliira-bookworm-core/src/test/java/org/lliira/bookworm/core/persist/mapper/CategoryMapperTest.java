@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.lliira.bookworm.core.AbstractTest;
 import org.lliira.bookworm.core.persist.PersistTestHelper;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -13,9 +14,9 @@ import org.testng.annotations.Test;
 import net.lliira.bookworm.core.BookwormHelper;
 import net.lliira.bookworm.core.persist.mapper.CategoryBookMapper;
 import net.lliira.bookworm.core.persist.mapper.CategoryMapper;
-import net.lliira.bookworm.core.persist.model.BookEntity;
-import net.lliira.bookworm.core.persist.model.CategoryBookEntity;
-import net.lliira.bookworm.core.persist.model.CategoryEntity;
+import net.lliira.bookworm.core.persist.model.BookData;
+import net.lliira.bookworm.core.persist.model.CategoryBookData;
+import net.lliira.bookworm.core.persist.model.CategoryData;
 
 public class CategoryMapperTest extends AbstractTest {
 
@@ -31,7 +32,7 @@ public class CategoryMapperTest extends AbstractTest {
         final String name = "name-" + random.nextInt();
         final String description = "desc-" + random.nextInt();
         final float siblingIndex = 0;
-        CategoryEntity category = new CategoryEntity();
+        CategoryData category = new CategoryData();
         category.setName(name);
         category.setDescription(description);
         category.setSiblingIndex(siblingIndex);
@@ -49,10 +50,10 @@ public class CategoryMapperTest extends AbstractTest {
         compare(category, id, name, null, description, siblingIndex);
 
         // test adding a sibling on root level;
-        final CategoryEntity category2 = PersistTestHelper.createCategory(null);
+        final CategoryData category2 = PersistTestHelper.createCategory(null);
         Assert.assertEquals(category2.getSiblingIndex(), 1F);
 
-        final List<CategoryEntity> categories = categoryMapper.selectRoots();
+        final List<CategoryData> categories = categoryMapper.selectRoots();
         Assert.assertEquals(categories.size(), 2);
         compare(categories.get(0), category);
         compare(categories.get(1), category2);
@@ -60,14 +61,14 @@ public class CategoryMapperTest extends AbstractTest {
 
     @Test
     public void testInsertWithParent() {
-        final CategoryEntity parent = PersistTestHelper.createCategory(null);
+        final CategoryData parent = PersistTestHelper.createCategory(null);
 
-        final CategoryEntity category1 = PersistTestHelper.createCategory(parent);
-        final CategoryEntity category2 = PersistTestHelper.createCategory(parent);
+        final CategoryData category1 = PersistTestHelper.createCategory(parent);
+        final CategoryData category2 = PersistTestHelper.createCategory(parent);
         Assert.assertEquals(category1.getSiblingIndex(), 1F);
         Assert.assertEquals(category2.getSiblingIndex(), 2F);
 
-        final List<CategoryEntity> categories = categoryMapper.selectByParent(parent);
+        final List<CategoryData> categories = categoryMapper.selectByParent(parent);
         Assert.assertEquals(categories.size(), 2);
         compare(categories.get(0), category1);
         compare(categories.get(1), category2);
@@ -75,12 +76,12 @@ public class CategoryMapperTest extends AbstractTest {
 
     @Test
     public void testUpdate() {
-        CategoryEntity category = PersistTestHelper.createCategory(null);
+        CategoryData category = PersistTestHelper.createCategory(null);
         final Integer id = category.getId();
         final String name = "name-" + random.nextInt();
         final String description = "desc-" + random.nextInt();
         final float siblingIndex = 2F;
-        final CategoryEntity parent = PersistTestHelper.createCategory(null);
+        final CategoryData parent = PersistTestHelper.createCategory(null);
         category.setName(name);
         category.setDescription(description);
         category.setSiblingIndex(siblingIndex);
@@ -96,7 +97,7 @@ public class CategoryMapperTest extends AbstractTest {
 
     @Test
     public void testDelete() {
-        CategoryEntity category = PersistTestHelper.createCategory(null);
+        CategoryData category = PersistTestHelper.createCategory(null);
         final Integer id = category.getId();
         final int count = categoryMapper.delete(category);
         Assert.assertEquals(count, 1);
@@ -106,39 +107,73 @@ public class CategoryMapperTest extends AbstractTest {
 
     @Test
     public void testSelectByBook() {
-        final CategoryEntity category1 = PersistTestHelper.createCategory(null);
-        final CategoryEntity category2 = PersistTestHelper.createCategory(null);
-        final BookEntity book1 = PersistTestHelper.createBook();
-        final BookEntity book2 = PersistTestHelper.createBook();
+        final CategoryData category1 = PersistTestHelper.createCategory(null);
+        final CategoryData category2 = PersistTestHelper.createCategory(null);
+        final BookData book1 = PersistTestHelper.createBook();
+        final BookData book2 = PersistTestHelper.createBook();
 
         final CategoryBookMapper catBookMapper = BookwormHelper.get(CategoryBookMapper.class);
 
-        final CategoryBookEntity cat1book1 = new CategoryBookEntity(category1.getId(), book1.getId(), 0);
-        final CategoryBookEntity cat2book1 = new CategoryBookEntity(category2.getId(), book1.getId(), 0);
-        final CategoryBookEntity cat2book2 = new CategoryBookEntity(category2.getId(), book2.getId(), 1);
+        final CategoryBookData cat1book1 = new CategoryBookData(category1.getId(), book1.getId(), 0);
+        final CategoryBookData cat2book1 = new CategoryBookData(category2.getId(), book1.getId(), 0);
+        final CategoryBookData cat2book2 = new CategoryBookData(category2.getId(), book2.getId(), 1);
         catBookMapper.insert(cat1book1);
         catBookMapper.insert(cat2book1);
         catBookMapper.insert(cat2book2);
 
-        final List<CategoryEntity> categories = categoryMapper.selectByBook(book1);
+        final List<CategoryData> categories = categoryMapper.selectByBook(book1);
         compare(categories, category1, category2);
     }
 
-    private void compare(final Collection<CategoryEntity> actual, final CategoryEntity... expected) {
+    @Test
+    public void testSelectMaxRootId() {
+        // initial should be 0
+        Assert.assertEquals(this.categoryMapper.selectMaxRootIndex(), 0F);
+
+        // insert one
+        final CategoryData category1 = PersistTestHelper.createCategory(null);
+        Assert.assertTrue(category1.getSiblingIndex() > 0);
+        Assert.assertEquals(this.categoryMapper.selectMaxRootIndex(), category1.getSiblingIndex());
+
+        // insert another
+        final CategoryData category2 = PersistTestHelper.createCategory(null);
+        Assert.assertTrue(category2.getSiblingIndex() > 0);
+        Assert.assertEquals(this.categoryMapper.selectMaxRootIndex(), category2.getSiblingIndex());
+    }
+
+    @Test
+    public void testSelectMaxSiblingIndex() {
+        final CategoryData parent = PersistTestHelper.createCategory(null);
+
+        // initial should be 0
+        Assert.assertEquals(this.categoryMapper.selectMaxSiblingIndex(parent), 0F);
+
+        // insert one
+        final CategoryData category1 = PersistTestHelper.createCategory(parent);
+        Assert.assertTrue(category1.getSiblingIndex() > 0);
+        Assert.assertEquals(this.categoryMapper.selectMaxSiblingIndex(parent), category1.getSiblingIndex());
+
+        // insert another
+        final CategoryData category2 = PersistTestHelper.createCategory(parent);
+        Assert.assertTrue(category2.getSiblingIndex() > 0);
+        Assert.assertEquals(this.categoryMapper.selectMaxSiblingIndex(parent), category2.getSiblingIndex());
+    }
+
+    private void compare(final Collection<CategoryData> actual, final CategoryData... expected) {
         Assert.assertEquals(actual.size(), expected.length);
         // create a map to store expected authors
-        final Map<Integer, CategoryEntity> map = new HashMap<>(expected.length);
-        for (final CategoryEntity category : expected) {
+        final Map<Integer, CategoryData> map = new HashMap<>(expected.length);
+        for (final CategoryData category : expected) {
             map.put(category.getId(), category);
         }
-        for (final CategoryEntity category : actual) {
-            final CategoryEntity expectedCategory = map.get(category.getId());
+        for (final CategoryData category : actual) {
+            final CategoryData expectedCategory = map.get(category.getId());
             if (expectedCategory != null) compare(category, expectedCategory);
             else Assert.assertTrue(false, "unexpected author");
         }
     }
 
-    private void compare(final CategoryEntity actual, final CategoryEntity expected) {
+    private void compare(final CategoryData actual, final CategoryData expected) {
         Assert.assertEquals(actual.getId(), expected.getId());
         Assert.assertEquals(actual.getName(), expected.getName());
         Assert.assertEquals(actual.getDescription(), expected.getDescription());
@@ -146,12 +181,12 @@ public class CategoryMapperTest extends AbstractTest {
         Assert.assertEquals(actual.getParentId(), expected.getParentId());
     }
 
-    private void compare(final CategoryEntity actual, final Integer id, final String name,
+    private void compare(final CategoryData actual, final Integer id, final String name,
             final Integer parentId, final String description, final float siblingIndex) {
         Assert.assertEquals(actual.getName(), name);
         Assert.assertEquals(actual.getParentId(), parentId);
         Assert.assertEquals(actual.getSiblingIndex(), siblingIndex);
         Assert.assertEquals(actual.getDescription(), description);
-        if (id != null) Assert.assertEquals(actual.getId(), id);
+        if (id != null) Assert.assertEquals(actual.getId(), id.intValue());
     }
 }

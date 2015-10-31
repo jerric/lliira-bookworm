@@ -3,14 +3,16 @@ package net.lliira.bookworm.core.persist.model;
 import java.io.Serializable;
 import java.util.Date;
 
-public class UserEntity implements Serializable {
+import net.lliira.bookworm.core.model.User;
+
+public class UserData implements User, Serializable {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
 
-    private Integer id;
+    private int id;
     private String name;
     private String email;
     private String password;
@@ -18,11 +20,54 @@ public class UserEntity implements Serializable {
     private boolean active;
     private String description;
 
-    /**
-     * @return the id
-     */
-    public Integer getId() {
+    @Override
+    public int getId() {
         return id;
+    }
+
+    @Override
+    public String getName() {
+        return this.name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getEmail() {
+        return this.email;
+    }
+
+    @Override
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public Date getRegisteredTime() {
+        return this.registeredTime;
+    }
+
+    @Override
+    public boolean isActive() {
+        return this.active;
+    }
+
+    @Override
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    @Override
+    public String getDescription() {
+        return this.description;
+    }
+
+    @Override
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     /**
@@ -33,20 +78,8 @@ public class UserEntity implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return this.email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public void setRegisteredTime(Date registeredTime) {
+        this.registeredTime = registeredTime;
     }
 
     public String getPassword() {
@@ -55,30 +88,6 @@ public class UserEntity implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public Date getRegisteredTime() {
-        return this.registeredTime;
-    }
-
-    public void setRegisteredTime(Date registeredTime) {
-        this.registeredTime = registeredTime;
-    }
-
-    public boolean isActive() {
-        return this.active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public String getDescription() {
-        return this.description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
 }

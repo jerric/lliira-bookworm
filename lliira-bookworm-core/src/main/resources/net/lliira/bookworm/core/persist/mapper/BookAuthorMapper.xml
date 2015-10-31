@@ -6,7 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
   <cache />
 
-  <resultMap type="BookAuthorEntity" id="BookAuthorMap">
+  <resultMap type="BookAuthorData" id="BookAuthorMap">
     <constructor>
       <idArg column="id" javaType="_int" />
     </constructor>
@@ -20,51 +20,51 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     ]]>
   </select>
 
-  <select id="selectByBook" parameterType="BookEntity" resultMap="BookAuthorMap">
+  <select id="selectByBook" parameterType="BookData" resultMap="BookAuthorMap">
     <![CDATA[
         SELECT * FROM book_authors WHERE book_id = #{id}
     ]]>
   </select>
 
-  <select id="selectByAuthor" parameterType="AuthorEntity" resultMap="BookAuthorMap">
+  <select id="selectByAuthor" parameterType="AuthorData" resultMap="BookAuthorMap">
     <![CDATA[
         SELECT * FROM book_authors WHERE author_id = #{id}
     ]]>
   </select>
 
-  <insert id="insert" parameterType="BookAuthorEntity" useGeneratedKeys="true" keyProperty="id"
+  <insert id="insert" parameterType="BookAuthorData" useGeneratedKeys="true" keyProperty="id"
     keyColumn="id">
     <![CDATA[
 		INSERT INTO book_authors (book_id, author_id) VALUES (#{bookId}, #{authorId})
     ]]>
   </insert>
 
-  <update id="update" parameterType="BookAuthorEntity">
+  <update id="update" parameterType="BookAuthorData">
     <![CDATA[
         UPDATE book_authors SET book_id = #{bookId}, author_id = #{authorId} WHERE id = #{id}
     ]]>
   </update>
 
-  <delete id="delete" parameterType="BookAuthorEntity">
+  <delete id="delete" parameterType="BookAuthorData">
     <![CDATA[
 		DELETE FROM book_authors WHERE id = #{id}
     ]]>
   </delete>
 
   <delete id="deleteByList" parameterType="List">
-	DELETE FROM book_authors WHERE id IN
-	<foreach item="bookAuthor" index="index" collection="list" open="(" separator="," close=")">
-        #{bookAuthor.id}
+    DELETE FROM book_authors WHERE id IN
+    <foreach item="bookAuthor" index="index" collection="list" open="(" separator="," close=")">
+      #{bookAuthor.id}
     </foreach>
   </delete>
 
-  <delete id="deleteByAuthor" parameterType="AuthorEntity">
+  <delete id="deleteByAuthor" parameterType="AuthorData">
     <![CDATA[
 		DELETE FROM book_authors WHERE author_id = #{id}
     ]]>
   </delete>
 
-  <delete id="deleteByBook" parameterType="BookEntity">
+  <delete id="deleteByBook" parameterType="BookData">
     <![CDATA[
 		DELETE FROM book_authors WHERE book_id = #{id}
     ]]>

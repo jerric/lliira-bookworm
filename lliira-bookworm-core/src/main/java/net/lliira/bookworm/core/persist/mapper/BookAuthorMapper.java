@@ -2,28 +2,28 @@ package net.lliira.bookworm.core.persist.mapper;
 
 import java.util.List;
 
-import net.lliira.bookworm.core.persist.model.AuthorEntity;
-import net.lliira.bookworm.core.persist.model.BookAuthorEntity;
-import net.lliira.bookworm.core.persist.model.BookEntity;
+import net.lliira.bookworm.core.persist.model.AuthorData;
+import net.lliira.bookworm.core.persist.model.BookAuthorData;
+import net.lliira.bookworm.core.persist.model.BookData;
 
 public interface BookAuthorMapper {
 
-    BookAuthorEntity select(int id);
+    BookAuthorData select(int id);
 
-    List<BookAuthorEntity> selectByAuthor(AuthorEntity author);
+    List<BookAuthorData> selectByAuthor(AuthorData author);
 
-    List<BookAuthorEntity> selectByBook(BookEntity book);
+    List<BookAuthorData> selectByBook(BookData book);
 
-    int insert(BookAuthorEntity bookAuthor);
+    int insert(BookAuthorData bookAuthor);
 
-    int update(BookAuthorEntity bookAuthor);
+    int update(BookAuthorData bookAuthor);
 
-    int delete(BookAuthorEntity bookAuthor);
+    int delete(BookAuthorData bookAuthor);
 
-    int deleteByList(List<BookAuthorEntity> bookAuthors);
+    int deleteByList(List<BookAuthorData> bookAuthors);
 
-    int deleteByAuthor(AuthorEntity author);
+    int deleteByAuthor(AuthorData author);
 
-    int deleteByBook(BookEntity book);
+    int deleteByBook(BookData book);
 
 }

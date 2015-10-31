@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.lliira.bookworm.core.AbstractTest;
 import org.lliira.bookworm.core.persist.PersistTestHelper;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -15,9 +16,9 @@ import org.testng.annotations.Test;
 import net.lliira.bookworm.core.BookwormHelper;
 import net.lliira.bookworm.core.persist.mapper.BookAuthorMapper;
 import net.lliira.bookworm.core.persist.mapper.BookMapper;
-import net.lliira.bookworm.core.persist.model.AuthorEntity;
-import net.lliira.bookworm.core.persist.model.BookAuthorEntity;
-import net.lliira.bookworm.core.persist.model.BookEntity;
+import net.lliira.bookworm.core.persist.model.AuthorData;
+import net.lliira.bookworm.core.persist.model.BookAuthorData;
+import net.lliira.bookworm.core.persist.model.BookData;
 
 public class BookMapperTest extends AbstractTest {
 
@@ -34,7 +35,7 @@ public class BookMapperTest extends AbstractTest {
         final String sortedName = "sorted-name-" + random.nextInt();
         final String description = "desc-" + random.nextInt();
         final Date publishDate = new Date();
-        BookEntity book = new BookEntity();
+        BookData book = new BookData();
         book.setName(name);
         book.setSortedName(sortedName);
         book.setDescription(description);
@@ -55,7 +56,7 @@ public class BookMapperTest extends AbstractTest {
 
     @Test
     public void testUpdate() {
-        BookEntity book = PersistTestHelper.createBook();
+        BookData book = PersistTestHelper.createBook();
         final Integer id = book.getId();
         final String name = "name-" + random.nextInt();
         final String sortedName = "sorted-name-" + random.nextInt();
@@ -76,7 +77,7 @@ public class BookMapperTest extends AbstractTest {
 
     @Test
     public void testDelete() {
-        BookEntity book = PersistTestHelper.createBook();
+        BookData book = PersistTestHelper.createBook();
         final Integer id = book.getId();
         final int count = bookMapper.delete(book);
         Assert.assertEquals(count, 1);
@@ -86,30 +87,30 @@ public class BookMapperTest extends AbstractTest {
 
     @Test
     public void testSelectByAuthor() {
-        final AuthorEntity author1 = PersistTestHelper.createAuthor();
-        final AuthorEntity author2 = PersistTestHelper.createAuthor();
-        final BookEntity book1 = PersistTestHelper.createBook();
-        final BookEntity book2 = PersistTestHelper.createBook();
+        final AuthorData author1 = PersistTestHelper.createAuthor();
+        final AuthorData author2 = PersistTestHelper.createAuthor();
+        final BookData book1 = PersistTestHelper.createBook();
+        final BookData book2 = PersistTestHelper.createBook();
 
         final BookAuthorMapper bookAuthorMapper = BookwormHelper.getContext().getBean(BookAuthorMapper.class);
 
-        final BookAuthorEntity book1Author1 = new BookAuthorEntity(book1.getId(), author1.getId());
-        final BookAuthorEntity book1Author2 = new BookAuthorEntity(book1.getId(), author2.getId());
-        final BookAuthorEntity book2Author2 = new BookAuthorEntity(book2.getId(), author2.getId());
+        final BookAuthorData book1Author1 = new BookAuthorData(book1.getId(), author1.getId());
+        final BookAuthorData book1Author2 = new BookAuthorData(book1.getId(), author2.getId());
+        final BookAuthorData book2Author2 = new BookAuthorData(book2.getId(), author2.getId());
         bookAuthorMapper.insert(book1Author1);
         bookAuthorMapper.insert(book1Author2);
         bookAuthorMapper.insert(book2Author2);
 
-        final List<BookEntity> books = bookMapper.selectByAuthor(author2);
+        final List<BookData> books = bookMapper.selectByAuthor(author2);
         compare(books, book1, book2);
     }
 
     @Test
     public void testSelectByName() {
         // create some default test author
-        final BookEntity book1 = PersistTestHelper.createBook();
-        final BookEntity book2 = PersistTestHelper.createBook();
-        List<BookEntity> authors = bookMapper.selectByName("%book%");
+        final BookData book1 = PersistTestHelper.createBook();
+        final BookData book2 = PersistTestHelper.createBook();
+        List<BookData> authors = bookMapper.selectByName("%book%");
         compare(authors, book1, book2);
 
         // modify an author, and search for it
@@ -120,21 +121,21 @@ public class BookMapperTest extends AbstractTest {
         compare(authors, book1);
     }
 
-    private void compare(Collection<BookEntity> actual, BookEntity... expected) {
+    private void compare(Collection<BookData> actual, BookData... expected) {
         Assert.assertEquals(actual.size(), expected.length);
         // create a map to store expected authors
-        final Map<Integer, BookEntity> map = new HashMap<>(expected.length);
-        for (final BookEntity book : expected) {
+        final Map<Integer, BookData> map = new HashMap<>(expected.length);
+        for (final BookData book : expected) {
             map.put(book.getId(), book);
         }
-        for (final BookEntity book : actual) {
-            final BookEntity expectedBook = map.get(book.getId());
+        for (final BookData book : actual) {
+            final BookData expectedBook = map.get(book.getId());
             if (expectedBook != null) compare(book, expectedBook);
             else Assert.assertTrue(false, "unexpected book");
         }
     }
 
-    private void compare(BookEntity actual, BookEntity expected) {
+    private void compare(BookData actual, BookData expected) {
         Assert.assertEquals(actual.getId(), expected.getId());
         Assert.assertEquals(actual.getName(), expected.getName());
         Assert.assertEquals(actual.getSortedName(), expected.getSortedName());
@@ -142,14 +143,14 @@ public class BookMapperTest extends AbstractTest {
         compareDate(actual.getPublishDate(), expected.getPublishDate());
     }
 
-    private void compare(final BookEntity actual, final Integer id, final String name,
+    private void compare(final BookData actual, final Integer id, final String name,
             final String sortedName, final String description, final Date publishDate) {
         Assert.assertEquals(actual.getName(), name);
         Assert.assertEquals(actual.getSortedName(), sortedName);
         Assert.assertEquals(actual.getDescription(), description);
         compareDate(actual.getPublishDate(), publishDate);
 
-        if (id != null) Assert.assertEquals(actual.getId(), id);
+        if (id != null) Assert.assertEquals(actual.getId(), id.intValue());
     }
 
     private void compareDate(final Date actual, final Date expected) {

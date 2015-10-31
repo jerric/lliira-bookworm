@@ -6,13 +6,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
   <cache />
 
-  <resultMap type="AuthorEntity" id="AuthorMap">
+  <resultMap type="AuthorData" id="AuthorMap">
     <id property="id" column="id" />
     <result property="name" column="name" />
     <result property="description" column="description" />
   </resultMap>
 
-  <insert id="insert" parameterType="AuthorEntity" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+  <insert id="insert" parameterType="AuthorData" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
     <![CDATA[
         INSERT INTO authors 
         			(name, description)
@@ -20,7 +20,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     ]]>
   </insert>
 
-  <update id="update" parameterType="AuthorEntity">
+  <update id="update" parameterType="AuthorData">
     <![CDATA[
         UPDATE authors
         SET name = #{name}, description = #{description}
@@ -28,7 +28,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     ]]>
   </update>
 
-  <delete id="delete" parameterType="AuthorEntity">
+  <delete id="delete" parameterType="AuthorData">
     <![CDATA[
         DELETE FROM authors WHERE id = #{id}
     ]]>
@@ -46,7 +46,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     ]]>
   </select>
 
-  <select id="selectByBook" parameterType="BookEntity" resultMap="AuthorMap">
+  <select id="selectByBook" parameterType="BookData" resultMap="AuthorMap">
     <![CDATA[
         SELECT a.* FROM authors a, book_authors ba WHERE a.id = ba.author_id AND ba.book_id = #{id}
     ]]>

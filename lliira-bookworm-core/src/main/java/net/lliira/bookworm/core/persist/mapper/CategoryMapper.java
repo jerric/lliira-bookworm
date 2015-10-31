@@ -2,22 +2,26 @@ package net.lliira.bookworm.core.persist.mapper;
 
 import java.util.List;
 
-import net.lliira.bookworm.core.persist.model.BookEntity;
-import net.lliira.bookworm.core.persist.model.CategoryEntity;
+import net.lliira.bookworm.core.persist.model.BookData;
+import net.lliira.bookworm.core.persist.model.CategoryData;
 
 public interface CategoryMapper {
 
-    int insert(CategoryEntity category);
+    int insert(CategoryData category);
 
-    int update(CategoryEntity category);
+    int update(CategoryData category);
 
-    int delete(CategoryEntity category);
+    int delete(CategoryData category);
 
-    CategoryEntity select(int categoryId);
+    CategoryData select(int categoryId);
 
-    List<CategoryEntity> selectRoots();
+    List<CategoryData> selectRoots();
 
-    List<CategoryEntity> selectByParent(CategoryEntity parent);
+    List<CategoryData> selectByParent(CategoryData parent);
 
-    List<CategoryEntity> selectByBook(BookEntity book);
+    List<CategoryData> selectByBook(BookData book);
+    
+    float selectMaxRootIndex();
+    
+    float selectMaxSiblingIndex(CategoryData parent);
 }

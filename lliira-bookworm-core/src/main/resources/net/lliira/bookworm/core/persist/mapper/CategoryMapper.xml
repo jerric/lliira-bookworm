@@ -6,7 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
   <cache />
 
-  <resultMap type="CategoryEntity" id="CategoryMap">
+  <resultMap type="CategoryData" id="CategoryMap">
     <id property="id" column="id" />
     <result property="name" column="name" />
     <result property="parentId" column="parent_id" />
@@ -14,15 +14,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <result property="description" column="description" />
   </resultMap>
 
-  <insert id="insert" parameterType="CategoryEntity" useGeneratedKeys="true" keyProperty="id"
-    keyColumn="id">
+  <insert id="insert" parameterType="CategoryData" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
     <![CDATA[
         INSERT INTO categories (name, parent_id, sibling_index, description)
         VALUES (#{name}, #{parentId}, #{siblingIndex}, #{description})
     ]]>
   </insert>
 
-  <update id="update" parameterType="CategoryEntity">
+  <update id="update" parameterType="CategoryData">
     <![CDATA[
         UPDATE categories
         SET name = #{name}, parent_id = #{parentId}, sibling_index = #{siblingIndex}, 
@@ -49,16 +48,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     ]]>
   </select>
 
-  <select id="selectByParent" parameterType="CategoryEntity" resultMap="CategoryMap">
+  <select id="selectByParent" parameterType="CategoryData" resultMap="CategoryMap">
     <![CDATA[
         SELECT * FROM categories WHERE parent_id = #{id} ORDER BY sibling_index ASC
     ]]>
   </select>
 
-  <select id="selectByBook" parameterType="BookEntity" resultMap="CategoryMap">
+  <select id="selectByBook" parameterType="BookData" resultMap="CategoryMap">
     <![CDATA[
         SELECT c.* FROM categories c, category_books cb
         WHERE c.id = cb.category_id AND cb.book_id = #{id}
+    ]]>
+  </select>
+
+  <select id="selectMaxRootIndex" resultType="float">
+    <![CDATA[
+        SELECT COALESCE(max(sibling_index), 0) FROM categories WHERE parent_id IS NULL
+    ]]>
+  </select>
+
+  <select id="selectMaxSiblingIndex" parameterType="CategoryData" resultType="float">
+    <![CDATA[
+        SELECT COALESCE(max(sibling_index), 0) FROM categories WHERE parent_id = #{id}
     ]]>
   </select>
 

@@ -2,25 +2,25 @@ package net.lliira.bookworm.core.persist.mapper;
 
 import java.util.List;
 
-import net.lliira.bookworm.core.persist.model.AuthorEntity;
-import net.lliira.bookworm.core.persist.model.BookEntity;
-import net.lliira.bookworm.core.persist.model.CategoryEntity;
+import net.lliira.bookworm.core.persist.model.AuthorData;
+import net.lliira.bookworm.core.persist.model.BookData;
+import net.lliira.bookworm.core.persist.model.CategoryData;
 
 public interface BookMapper {
 
-    int insert(BookEntity book);
+    int insert(BookData book);
 
-    int update(BookEntity book);
+    int update(BookData book);
 
-    int delete(BookEntity book);
+    int delete(BookData book);
 
-    BookEntity select(int id);
+    BookData select(int id);
 
-    List<BookEntity> selectByName(String pattern);
+    List<BookData> selectByName(String pattern);
 
-    List<BookEntity> selectByAuthor(AuthorEntity author);
+    List<BookData> selectByAuthor(AuthorData author);
 
-    List<BookEntity> selectByCategory(CategoryEntity category);
+    List<BookData> selectByCategory(CategoryData category);
 
-    List<BookEntity> selectByCategories(List<CategoryEntity> categories);
+    List<BookData> selectByCategories(List<CategoryData> categories);
 }

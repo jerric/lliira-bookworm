@@ -1,7 +1,6 @@
 package org.lliira.bookworm.core.persist;
 
 import java.util.Calendar;
-import java.util.List;
 import java.util.Random;
 
 import org.lliira.bookworm.core.TestHelper;
@@ -10,15 +9,15 @@ import net.lliira.bookworm.core.BookwormHelper;
 import net.lliira.bookworm.core.persist.mapper.AuthorMapper;
 import net.lliira.bookworm.core.persist.mapper.BookMapper;
 import net.lliira.bookworm.core.persist.mapper.CategoryMapper;
-import net.lliira.bookworm.core.persist.model.AuthorEntity;
-import net.lliira.bookworm.core.persist.model.BookEntity;
-import net.lliira.bookworm.core.persist.model.CategoryEntity;
+import net.lliira.bookworm.core.persist.model.AuthorData;
+import net.lliira.bookworm.core.persist.model.BookData;
+import net.lliira.bookworm.core.persist.model.CategoryData;
 
 public class PersistTestHelper {
 
-    public static AuthorEntity createAuthor() {
+    public static AuthorData createAuthor() {
         final Random random = TestHelper.getRandom();
-        final AuthorEntity author = new AuthorEntity();
+        final AuthorData author = new AuthorData();
         author.setName("author-name-" + random.nextInt());
         author.setDescription("author-desc-" + random.nextInt());
 
@@ -28,9 +27,9 @@ public class PersistTestHelper {
         return author;
     }
 
-    public static BookEntity createBook() {
+    public static BookData createBook() {
         final Random random = TestHelper.getRandom();
-        final BookEntity book = new BookEntity();
+        final BookData book = new BookData();
         book.setName("book-name-" + random.nextInt());
         book.setSortedName("sorted-name-" + random.nextInt());
         book.setDescription("book-desc-" + random.nextInt());
@@ -45,19 +44,15 @@ public class PersistTestHelper {
         return book;
     }
 
-    public static CategoryEntity createCategory(final CategoryEntity parent) {
+    public static CategoryData createCategory(final CategoryData parent) {
         final Random random = TestHelper.getRandom();
         final CategoryMapper categoryMapper = BookwormHelper.get(CategoryMapper.class);
 
-        final List<CategoryEntity> siblings = (parent == null) ? categoryMapper.selectRoots()
-                : categoryMapper.selectByParent(parent);
-        float siblingIndex = 0;
-        for (final CategoryEntity sibling : siblings) {
-            if (sibling.getSiblingIndex() >= siblingIndex) siblingIndex = sibling.getSiblingIndex();
-        }
-        siblingIndex = (float) Math.floor(siblingIndex) + 1;
+        final float siblingIndex;
+        if (parent == null) siblingIndex = categoryMapper.selectMaxRootIndex() + 1;
+        else siblingIndex = categoryMapper.selectMaxSiblingIndex(parent) + 1;
 
-        final CategoryEntity category = new CategoryEntity();
+        final CategoryData category = new CategoryData();
         category.setName("category-name-" + random.nextInt());
         category.setSiblingIndex(siblingIndex);
         category.setDescription("category-desc-" + random.nextInt());

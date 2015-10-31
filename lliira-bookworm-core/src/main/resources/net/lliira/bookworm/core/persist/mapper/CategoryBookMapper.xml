@@ -6,7 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
   <cache />
 
-  <resultMap type="CategoryBookEntity" id="CategoryBookMap">
+  <resultMap type="CategoryBookData" id="CategoryBookMap">
     <constructor>
       <idArg column="id" javaType="_int" />
     </constructor>
@@ -21,19 +21,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     ]]>
   </select>
 
-  <select id="selectByBook" parameterType="BookEntity" resultMap="CategoryBookMap">
+  <select id="selectByBook" parameterType="BookData" resultMap="CategoryBookMap">
     <![CDATA[
         SELECT * FROM category_books WHERE book_id = #{id}
     ]]>
   </select>
 
-  <select id="selectByCategory" parameterType="CategoryEntity" resultMap="CategoryBookMap">
+  <select id="selectByCategory" parameterType="CategoryData" resultMap="CategoryBookMap">
     <![CDATA[
         SELECT * FROM category_books WHERE category_id = #{id}
     ]]>
   </select>
 
-  <insert id="insert" parameterType="CategoryBookEntity" useGeneratedKeys="true" keyProperty="id"
+  <insert id="insert" parameterType="CategoryBookData" useGeneratedKeys="true" keyProperty="id"
     keyColumn="id">
     <![CDATA[
 		INSERT INTO category_books (book_id, category_id, sibling_index) 
@@ -41,7 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     ]]>
   </insert>
 
-  <update id="update" parameterType="CategoryBookEntity">
+  <update id="update" parameterType="CategoryBookData">
     <![CDATA[
         UPDATE category_books 
         SET book_id = #{bookId}, category_id = #{categoryId}, sibling_index = #{siblingIndex} 
@@ -49,36 +49,36 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     ]]>
   </update>
 
-  <delete id="delete" parameterType="CategoryBookEntity">
+  <delete id="delete" parameterType="CategoryBookData">
     <![CDATA[
         DELETE FROM category_books WHERE book_id = #{bookId} AND category_id = #{categoryId}
     ]]>
   </delete>
 
-  <delete id="deleteByBook" parameterType="BookEntity">
+  <delete id="deleteByBook" parameterType="BookData">
     <![CDATA[
 		DELETE FROM category_books WHERE book_id = #{id}
     ]]>
   </delete>
 
-  <delete id="deleteByCategory" parameterType="CategoryEntity">
+  <delete id="deleteByCategory" parameterType="CategoryData">
     <![CDATA[
 		DELETE FROM category_books WHERE category_id = #{id}
     ]]>
   </delete>
 
   <delete id="deleteByList" parameterType="List">
-      DELETE FROM category_books WHERE id IN
-      <foreach item="categoryBook" index="index" collection="list" open="(" separator="," close=")">
-          #{categoryBook.id}
-      </foreach>
+    DELETE FROM category_books WHERE id IN
+    <foreach item="categoryBook" index="index" collection="list" open="(" separator="," close=")">
+      #{categoryBook.id}
+    </foreach>
   </delete>
 
   <delete id="deleteByCategories" parameterType="List">
-      DELETE FROM category_books WHERE category_id IN
-      <foreach item="category" index="index" collection="list" open="(" separator="," close=")">
-          #{category.id}
-      </foreach>
+    DELETE FROM category_books WHERE category_id IN
+    <foreach item="category" index="index" collection="list" open="(" separator="," close=")">
+      #{category.id}
+    </foreach>
   </delete>
 
 </mapper>

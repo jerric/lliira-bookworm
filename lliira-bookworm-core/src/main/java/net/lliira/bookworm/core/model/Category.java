@@ -1,68 +1,22 @@
 package net.lliira.bookworm.core.model;
 
-public class Category {
+public interface Category {
 
-    private final int id;
-    private String name;
-    private Category parent;
-    private int siblingIndex;
-    private String description;
+    int getId();
 
-    public Category(int id) {
-        this.id = id;
-    }
+    String getName();
 
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
+    Category getParent();
 
-    /**
-     * @param name
-     *            the name to set
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
+    float getSiblingIndex();
 
-    /**
-     * @return the parent
-     */
-    public Category getParent() {
-        return parent;
-    }
+    String getDescription();
 
-    /**
-     * @param parent
-     *            the parent to set
-     */
-    public void setParent(Category parent) {
-        this.parent = parent;
-    }
+    void setName(final String name);
 
-    /**
-     * @return the id
-     */
-    public int getId() {
-        return id;
-    }
+    void setParent(final Category parent);
 
-    public int getSiblingIndex() {
-        return this.siblingIndex;
-    }
+    void setSiblingIndex(final float siblingIndex);
 
-    public void setSiblingIndex(int siblingIndex) {
-        this.siblingIndex = siblingIndex;
-    }
-
-    public String getDescription() {
-        return this.description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
+    void setDescription(final String description);
 }

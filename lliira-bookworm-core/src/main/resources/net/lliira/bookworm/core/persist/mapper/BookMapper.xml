@@ -6,7 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
   <cache />
 
-  <resultMap type="BookEntity" id="BookMap">
+  <resultMap type="BookData" id="BookMap">
     <id property="id" column="id" />
     <result property="name" column="name" />
     <result property="sortedName" column="sorted_name" />
@@ -14,14 +14,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <result property="description" column="description" />
   </resultMap>
 
-  <insert id="insert" parameterType="BookEntity" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+  <insert id="insert" parameterType="BookData" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
     <![CDATA[
         INSERT INTO books (name, sorted_name, publish_date,description) 
         VALUES (#{name}, #{sortedName}, #{publishDate}, #{description})
     ]]>
   </insert>
 
-  <update id="update" parameterType="BookEntity">
+  <update id="update" parameterType="BookData">
     <![CDATA[
         UPDATE books
         SET name = #{name}, sorted_name = #{sortedName}, publish_date = #{publishDate}, 
@@ -48,7 +48,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     ]]>
   </select>
 
-  <select id="selectByAuthor" parameterType="AuthorEntity" resultMap="BookMap">
+  <select id="selectByAuthor" parameterType="AuthorData" resultMap="BookMap">
     <![CDATA[
         SELECT b.* 
         FROM books b, book_authors ba
@@ -56,7 +56,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     ]]>
   </select>
 
-  <select id="selectByCategory" parameterType="CategoryEntity" resultMap="BookMap">
+  <select id="selectByCategory" parameterType="CategoryData" resultMap="BookMap">
     <![CDATA[
         SELECT b.* 
         FROM books b, category_books cb

@@ -1,8 +1,7 @@
-package org.lliira.bookworm.core.persist.mapper;
+package org.lliira.bookworm.core;
 
 import java.util.Random;
 
-import org.lliira.bookworm.core.TestHelper;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
