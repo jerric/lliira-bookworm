@@ -9,6 +9,8 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 public class BookwormHelper {
     
+    public static final int PRESICION = 1000;
+    
     private static String contextPath = "classpath:META-INF/app-context.xml";
     
     private static ApplicationContext context;
@@ -47,8 +49,20 @@ public class BookwormHelper {
         return new Transaction(transactionStatus);
     }
 
-    public static void main(String[] args) {
-        long val = Long.MAX_VALUE * 10;
-        System.out.println(val);
+    public static int ns(float sibling) {
+        return Math.round(sibling * PRESICION);
+    }
+    
+    public static float ds(int nsibling) {
+        return (float)nsibling / PRESICION;
+    }
+    
+    public static int getIncrement(int nsibling) {
+        if (nsibling == 0) return PRESICION;
+        int base = 10;
+        while (base <= PRESICION && nsibling % base == 0) {
+            base *= 10;
+        }
+        return base /= 10;
     }
 }

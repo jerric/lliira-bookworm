@@ -3,13 +3,16 @@ package net.lliira.bookworm.core.service;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import net.lliira.bookworm.core.BookException;
 import net.lliira.bookworm.core.CategoryException;
 import net.lliira.bookworm.core.model.Book;
 import net.lliira.bookworm.core.model.Category;
+import net.lliira.bookworm.core.persist.mapper.CategoryBookMapper;
 import net.lliira.bookworm.core.persist.mapper.CategoryMapper;
 import net.lliira.bookworm.core.persist.model.BookData;
 import net.lliira.bookworm.core.persist.model.CategoryData;
@@ -18,6 +21,12 @@ public class CategoryService {
 
     @Autowired
     private CategoryMapper categoryMapper;
+    
+    @Autowired
+    private CategoryBookMapper categoryBookMapper;
+    
+    @Autowired
+    private BookService bookService;
 
     public List<Category> get(final Category parent) {
         final List<CategoryData> categories = (parent == null) ? this.categoryMapper.selectRoots()
@@ -53,5 +62,22 @@ public class CategoryService {
 
         if (1 == this.categoryMapper.insert(category)) return category;
         else throw new CategoryException("Creating category failed.");
+    }
+    
+    public void update(final Category category) {
+        
+    }
+    
+    public void delete(final Category category) {
+        
+    }
+    
+    public void setCategoriesToBook(final Book book, final Map<Category, Float> categories)
+            throws CategoryException {
+        try {
+            this.bookService.setCategories(book, categories);
+        } catch (BookException ex) {
+            throw new CategoryException(ex);
+        }
     }
 }

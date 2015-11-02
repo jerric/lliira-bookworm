@@ -40,13 +40,18 @@ public class AuthorServiceTest extends AbstractTest {
     }
 
     @Test
+    public void testUpdate() {
+        Assert.assertTrue(false);
+    }
+
+    @Test
     public void testDeleteWithReference() throws AuthorException, BookException {
         final Author author = TestHelper.createAuthor();
         final Book book1 = TestHelper.createBook();
         final Book book2 = TestHelper.createBook();
 
-        this.authorService.setBookAuthor(book1, Collections.singletonList(author));
-        this.authorService.setBookAuthor(book2, Collections.singletonList(author));
+        this.authorService.setAuthorsToBook(book1, Collections.singletonList(author));
+        this.authorService.setAuthorsToBook(book2, Collections.singletonList(author));
 
         this.authorService.delete(author);
 
@@ -54,20 +59,25 @@ public class AuthorServiceTest extends AbstractTest {
     }
 
     @Test
-    public void testSetBookAuthor() throws AuthorException, BookException {
+    public void testSetBookAuthorWithInsert() throws AuthorException, BookException {
         final Author author1 = TestHelper.createAuthor();
         final Author author2 = TestHelper.createAuthor();
         final Book book1 = TestHelper.createBook();
         final Book book2 = TestHelper.createBook();
 
-        this.authorService.setBookAuthor(book1, Collections.singletonList(author1));
-        this.authorService.setBookAuthor(book2, Collections.singletonList(author2));
+        this.authorService.setAuthorsToBook(book1, Collections.singletonList(author1));
+        this.authorService.setAuthorsToBook(book2, Collections.singletonList(author2));
 
         final Set<Author> authors = this.authorService.get(book1);
         Assert.assertEquals(authors.size(), 1);
         compare(authors.iterator().next(), author1);
     }
 
+    @Test
+    public void testSetBookAuthorWithDelete() throws AuthorException, BookException {
+        Assert.assertTrue(false);
+    }
+    
     private void compare(final Author actual, final Author expected) {
         Assert.assertEquals(actual.getId(), expected.getId());
         Assert.assertEquals(actual.getName(), expected.getName());

@@ -32,6 +32,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SELECT * FROM category_books WHERE category_id = #{id}
     ]]>
   </select>
+  
+  <select id="selectBySibling" parameterType="CategoryBookData" resultMap="CategoryBookMap">
+    <![CDATA[
+        SELECT * FROM category_books 
+        WHERE category_id = #{categoryId} AND sibling_index >= #{siblingIndex} AND book_id != #{bookId}
+        ORDER BY sibling_index ASC
+    ]]>
+  </select>
+  
 
   <insert id="insert" parameterType="CategoryBookData" useGeneratedKeys="true" keyProperty="id"
     keyColumn="id">
