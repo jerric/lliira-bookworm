@@ -56,7 +56,7 @@ public class BookData implements Book, Serializable {
     @Override
     public void setName(final String name) {
         this.name = name;
-        this.sortedName = this.name;
+        if (this.sortedName == null) this.sortedName = this.name;
     }
 
     @Override

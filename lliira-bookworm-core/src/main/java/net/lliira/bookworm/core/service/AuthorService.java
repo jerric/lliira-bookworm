@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import net.lliira.bookworm.core.AuthorException;
 import net.lliira.bookworm.core.BookException;
+import net.lliira.bookworm.core.BookwormHelper;
 import net.lliira.bookworm.core.model.Author;
 import net.lliira.bookworm.core.model.Book;
 import net.lliira.bookworm.core.persist.mapper.AuthorMapper;
@@ -37,16 +38,19 @@ public class AuthorService {
         else throw new AuthorException("Creating author failed.");
     }
 
-    public Author update(final Author author) throws AuthorException {
+    public void update(final Author author) throws AuthorException {
         final AuthorData authorData = new AuthorData(author);
         validate(authorData);
 
-        if (1 == this.authorMapper.update(authorData)) return authorData;
-        else throw new AuthorException("Updating author failed.");
+        if (1 != this.authorMapper.update(authorData)) throw new AuthorException("Updating author failed.");
+
+        // set the value back, since they may be normalized
+        author.setName(authorData.getName());
+        author.setDescription(authorData.getDescription());
     }
 
     private void validate(final AuthorData author) throws AuthorException {
-        String name = author.getName();
+        final String name = author.getName();
         if (name == null || name.trim().isEmpty())
             throw new AuthorException("Author name cannot be null or empty");
         author.setName(name.trim());
@@ -69,8 +73,7 @@ public class AuthorService {
 
     public Set<Author> get(String namePattern) {
         // normalize the pattern
-        namePattern = (namePattern == null || namePattern.isEmpty()) ? namePattern = "%"
-                : "%" + namePattern.replace('*', '%') + "%";
+        namePattern = BookwormHelper.normalizePattern(namePattern);
         final List<AuthorData> authors = this.authorMapper.selectByName(namePattern);
         return new HashSet<>(authors);
     }

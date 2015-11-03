@@ -8,13 +8,13 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 public class BookwormHelper {
-    
+
     public static final int PRESICION = 1000;
-    
+
     private static String contextPath = "classpath:META-INF/app-context.xml";
-    
+
     private static ApplicationContext context;
-    
+
     public synchronized static void setContextString(final String contextPath) {
         BookwormHelper.contextPath = contextPath;
         BookwormHelper.context = null;
@@ -52,11 +52,11 @@ public class BookwormHelper {
     public static int ns(float sibling) {
         return Math.round(sibling * PRESICION);
     }
-    
+
     public static float ds(int nsibling) {
-        return (float)nsibling / PRESICION;
+        return (float) nsibling / PRESICION;
     }
-    
+
     public static int getIncrement(int nsibling) {
         if (nsibling == 0) return PRESICION;
         int base = 10;
@@ -64,5 +64,9 @@ public class BookwormHelper {
             base *= 10;
         }
         return base /= 10;
+    }
+
+    public static String normalizePattern(final String pattern) {
+        return pattern.isEmpty() ? "%" : "%" + pattern.replace('*', '%') + "%";
     }
 }

@@ -21,10 +21,10 @@ public class CategoryService {
 
     @Autowired
     private CategoryMapper categoryMapper;
-    
+
     @Autowired
     private CategoryBookMapper categoryBookMapper;
-    
+
     @Autowired
     private BookService bookService;
 
@@ -54,24 +54,27 @@ public class CategoryService {
         category.setParent(parent);
         category.setDescription(description);
 
-        final CategoryData parentData = new CategoryData(parent);
         final float siblingIndex;
         if (parent == null) siblingIndex = this.categoryMapper.selectMaxRootIndex() + 1;
-        else siblingIndex = this.categoryMapper.selectMaxSiblingIndex(parentData) + 1;
+        else siblingIndex = this.categoryMapper.selectMaxSiblingIndex(new CategoryData(parent)) + 1;
         category.setSiblingIndex(siblingIndex);
 
         if (1 == this.categoryMapper.insert(category)) return category;
         else throw new CategoryException("Creating category failed.");
     }
-    
+
     public void update(final Category category) {
-        
+
     }
-    
+
+    private void validate(final CategoryData category) {
+
+    }
+
     public void delete(final Category category) {
-        
+
     }
-    
+
     public void setCategoriesToBook(final Book book, final Map<Category, Float> categories)
             throws CategoryException {
         try {

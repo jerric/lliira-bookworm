@@ -27,14 +27,22 @@ public class TestHelper {
         }
         return random;
     }
-    
+
     public static Author createAuthor() throws AuthorException {
         final Random random = getRandom();
         final String name = "book-name-" + random.nextInt();
         final String description = "book-desc-" + random.nextInt();
-        
+
         final AuthorService authorService = BookwormHelper.get(AuthorService.class);
         return authorService.create(name, description);
+    }
+
+    public static Author[] createAuthors(final int count) throws AuthorException {
+        final Author[] authors = new Author[count];
+        for (int i = 0; i < count; i++) {
+            authors[i] = createAuthor();
+        }
+        return authors;
     }
 
     public static Book createBook() throws BookException {
@@ -49,12 +57,29 @@ public class TestHelper {
         final BookService bookService = BookwormHelper.get(BookService.class);
         return bookService.create(name, sortedName, publishDate, description);
     }
-    
+
+    public static Book[] createBooks(final int count) throws BookException {
+        final Book[] books = new Book[count];
+        for (int i = 0; i < count; i++) {
+            books[i] = createBook();
+        }
+        return books;
+    }
+
     public static Category createCategory(final Category parent) throws CategoryException {
         final Random random = TestHelper.getRandom();
         final CategoryService categoryService = BookwormHelper.get(CategoryService.class);
         final String name = "category-name-" + random.nextInt();
         final String description = "category-desc-" + random.nextInt();
         return categoryService.create(name, parent, description);
+    }
+
+    public static Category[] createCategories(final Category parent, final int count)
+            throws CategoryException {
+        final Category[] categories = new Category[count];
+        for (int i = 0; i < count; i++) {
+            categories[i] = createCategory(parent);
+        }
+        return categories;
     }
 }

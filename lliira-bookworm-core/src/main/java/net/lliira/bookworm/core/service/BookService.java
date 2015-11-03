@@ -2,12 +2,15 @@ package net.lliira.bookworm.core.service;
 
 import static net.lliira.bookworm.core.BookwormHelper.ds;
 import static net.lliira.bookworm.core.BookwormHelper.getIncrement;
+import static net.lliira.bookworm.core.BookwormHelper.normalizePattern;
 import static net.lliira.bookworm.core.BookwormHelper.ns;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,9 +23,11 @@ import net.lliira.bookworm.core.model.Category;
 import net.lliira.bookworm.core.persist.mapper.BookAuthorMapper;
 import net.lliira.bookworm.core.persist.mapper.BookMapper;
 import net.lliira.bookworm.core.persist.mapper.CategoryBookMapper;
+import net.lliira.bookworm.core.persist.model.AuthorData;
 import net.lliira.bookworm.core.persist.model.BookAuthorData;
 import net.lliira.bookworm.core.persist.model.BookData;
 import net.lliira.bookworm.core.persist.model.CategoryBookData;
+import net.lliira.bookworm.core.persist.model.CategoryData;
 
 public class BookService {
 
@@ -43,20 +48,38 @@ public class BookService {
     @Autowired
     private CategoryBookMapper categoryBookMapper;
 
-    public List<Book> get(Category category, boolean recursive) {
-        return null;
+    public Map<Float, Book> get(Category category) {
+        final CategoryData categoryData = new CategoryData(category);
+        final List<BookData> books = this.bookMapper.selectByCategory(categoryData);
+        final List<CategoryBookData> catBooks = this.categoryBookMapper.selectByCategory(categoryData);
+
+        // convert books into a map for easy access
+        final Map<Integer, Book> tempMap = new HashMap<>(books.size());
+        for (final Book book : books) {
+            tempMap.put(book.getId(), book);
+        }
+
+        final Map<Float, Book> bookMap = new LinkedHashMap<>(books.size());
+        for (final CategoryBookData catBook : catBooks) {
+            bookMap.put(catBook.getSiblingIndex(), tempMap.get(catBook.getBookId()));
+        }
+        return bookMap;
     }
 
     public List<Book> get(Author author) {
-        return null;
+        final List<BookData> books = this.bookMapper.selectByAuthor(new AuthorData(author));
+        return new ArrayList<>(books);
     }
 
     public List<Book> get(String namePattern) {
-        return null;
+        // normalize pattern
+        namePattern = normalizePattern(namePattern);
+        final List<BookData> books = this.bookMapper.selectByName(namePattern);
+        return new ArrayList<>(books);
     }
 
     public Book get(int id) {
-        return null;
+        return this.bookMapper.select(id);
     }
 
     public Book create(String name, String sortedName, Date publishDate, String description)
@@ -66,16 +89,59 @@ public class BookService {
         book.setSortedName(sortedName);
         book.setPublishDate(publishDate);
         book.setDescription(description);
+        validate(book);
         if (1 == this.bookMapper.insert(book)) return book;
         else throw new BookException("Creating book failed.");
     }
 
-    public void update(Book book) {
-
+    public void update(Book book) throws BookException {
+        final BookData bookData = new BookData(book);
+        validate(bookData);
+        if (1 != this.bookMapper.update(bookData)) throw new BookException("Updating book failed.");
+        
+        // set the values back, since they may be normalized.
+        book.setName(bookData.getName());
+        book.setSortedName(bookData.getSortedName());
+        book.setPublishDate(bookData.getPublishDate());
+        book.setDescription(bookData.getDescription());
     }
 
-    public void delete(Book book) {
+    private void validate(final BookData book) throws BookException {
+        // validate name
+        final String name = book.getName();
+        if (name == null || name.trim().isEmpty())
+            throw new BookException("Book name cannot be null or empty");
+        book.setName(name.trim());
 
+        // normalize sorted name
+        final String sortedName = book.getSortedName();
+        book.setSortedName(
+                (sortedName == null || sortedName.isEmpty()) ? sortName(book.getName()) : sortedName.trim());
+
+        // normalize description
+        if (book.getDescription() != null) book.setDescription(book.getDescription().trim());
+
+        // normalize publish date by removing time portion
+        final Date publishDate = book.getPublishDate();
+        if (publishDate != null) {
+            final Calendar calendar = Calendar.getInstance();
+            calendar.setTime(publishDate);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            book.setPublishDate(calendar.getTime());
+        }
+    }
+
+    public void delete(Book book) throws BookException {
+        final BookData bookData = new BookData(book);
+
+        // need to delete author & category associations first
+        this.bookAuthorMapper.deleteByBook(bookData);
+        this.categoryBookMapper.deleteByBook(bookData);
+
+        if (1 != this.bookMapper.delete(new BookData(book))) throw new BookException("Updating book failed.");
     }
 
     public void setAuthors(final Book book, final Collection<Author> authors) throws BookException {
@@ -185,7 +251,7 @@ public class BookService {
         for (final CategoryBookData catBook : catBooks) {
             final int ns = ns(catBook.getSiblingIndex());
             if (prevNSibling != ns) break; // stop, no need to increment any further
-            
+
             prevNSibling = prevNSibling + increment;
             catBook.setSiblingIndex(ds(prevNSibling));
             this.categoryBookMapper.update(catBook);
