@@ -5,10 +5,12 @@ import static net.lliira.bookworm.core.BookwormHelper.getIncrement;
 import static net.lliira.bookworm.core.BookwormHelper.normalizePattern;
 import static net.lliira.bookworm.core.BookwormHelper.ns;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -98,7 +100,7 @@ public class BookService {
         final BookData bookData = new BookData(book);
         validate(bookData);
         if (1 != this.bookMapper.update(bookData)) throw new BookException("Updating book failed.");
-        
+
         // set the values back, since they may be normalized.
         book.setName(bookData.getName());
         book.setSortedName(bookData.getSortedName());
@@ -204,7 +206,8 @@ public class BookService {
             if (catBook == null) {
                 inserts.add(new CategoryBookData(category.getId(), book.getId(), siblingIndex));
             } else if (catBook.getSiblingIndex() != siblingIndex) {
-                updates.add(new CategoryBookData(category.getId(), book.getId(), siblingIndex));
+                catBook.setSiblingIndex(siblingIndex);
+                updates.add(catBook);
             }
         }
         for (final CategoryBookData catBook : prevCatBooks) {
@@ -220,41 +223,52 @@ public class BookService {
 
         // insert new associations
         for (final CategoryBookData catBook : inserts) {
-            if (1 != this.categoryBookMapper.insert(catBook))
-                throw new BookException(String.format("Inserting category-book failed, book=%d, category=%d",
-                        catBook.getBookId(), catBook.getCategoryId()));
             normalizeSiblingIndexes(catBook);
+            if (1 != this.categoryBookMapper.insert(catBook))
+                throw new BookException(String.format("Inserting category-book failed:" + catBook));
         }
 
         // update associations
         for (final CategoryBookData catBook : updates) {
-            if (1 != this.categoryBookMapper.update(catBook))
-                throw new BookException(String.format("Updating category-book failed, book=%d, category=%d",
-                        catBook.getBookId(), catBook.getCategoryId()));
             normalizeSiblingIndexes(catBook);
+            if (1 != this.categoryBookMapper.update(catBook))
+                throw new BookException(String.format("Updating category-book failed: " + catBook));
         }
     }
 
-    private void normalizeSiblingIndexes(final CategoryBookData categoryBook) {
+    private void normalizeSiblingIndexes(final CategoryBookData categoryBook) throws BookException {
         final int nsibling = ns(categoryBook.getSiblingIndex());
 
         // the list is assumed to be sorted by sibling index in ascending order.
         final List<CategoryBookData> catBooks = this.categoryBookMapper.selectByMinSibling(categoryBook);
+
         // only need to normalize it when the next sibling index is the same as the current one
-        if (catBooks.isEmpty() || ns(catBooks.get(0).getSiblingIndex()) == ns(categoryBook.getSiblingIndex()))
-            return;
+        if (catBooks.isEmpty() || ns(catBooks.get(0).getSiblingIndex()) != nsibling) return;
 
         // determine the increments
         final int increment = getIncrement(nsibling);
 
+        final Deque<CategoryBookData> updates = new ArrayDeque<>();
         int prevNSibling = nsibling;
         for (final CategoryBookData catBook : catBooks) {
+            // skip the current catBook
+            if (catBook.getBookId() == categoryBook.getBookId()
+                    && catBook.getCategoryId() == categoryBook.getCategoryId())
+                continue;
+
             final int ns = ns(catBook.getSiblingIndex());
             if (prevNSibling != ns) break; // stop, no need to increment any further
 
             prevNSibling = prevNSibling + increment;
             catBook.setSiblingIndex(ds(prevNSibling));
-            this.categoryBookMapper.update(catBook);
+            updates.offerLast(catBook);
+        }
+
+        // now need to update from the tail to avoid duplicate indexes
+        while (!updates.isEmpty()) {
+            final CategoryBookData catBook = updates.pollLast();
+            if (1 != this.categoryBookMapper.update(catBook))
+                throw new BookException("Updating category-book failed: " + catBook);
         }
     }
 }

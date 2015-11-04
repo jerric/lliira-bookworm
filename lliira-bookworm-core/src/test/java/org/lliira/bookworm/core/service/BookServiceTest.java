@@ -2,6 +2,7 @@ package org.lliira.bookworm.core.service;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -127,33 +128,102 @@ public class BookServiceTest extends AbstractTest {
     }
 
     @Test
-    public void testSetAuthorsWithDelete() {
-        Assert.assertTrue(false);
+    public void testSetAuthorsWithDelete() throws BookException, AuthorException {
+        final Book book = TestHelper.createBook();
+        final Author[] authors = TestHelper.createAuthors(3);
+        this.bookService.setAuthors(book, Arrays.asList(authors[0], authors[1]));
+
+        // then set another group of authors to cause a deletion
+        this.bookService.setAuthors(book, Arrays.asList(authors[1], authors[2]));
+        Assert.assertEquals(this.bookService.get(authors[0]).size(), 0);
+
+        final List<Book> list1 = this.bookService.get(authors[1]);
+        Assert.assertEquals(list1.size(), 1);
+        compare(list1.get(0), book);
+
+        final List<Book> list2 = this.bookService.get(authors[2]);
+        Assert.assertEquals(list2.size(), 1);
+        compare(list2.get(0), book);
     }
 
     @Test
-    public void testSetCategoriesWithInsert() {
-        Assert.assertTrue(false);
+    public void testSetCategoriesWithInsert() throws BookException, CategoryException {
+        final Book[] books = TestHelper.createBooks(2);
+        final Category[] categories = TestHelper.createCategories(null, 2);
+        final Map<Category, Float> map0 = toMap(1F, categories);
+        final Map<Category, Float> map1 = toMap(2F, categories[0]);
+        this.bookService.setCategories(books[0], map0);
+        this.bookService.setCategories(books[1], map1);
+
+        final Map<Float, Book> list0 = this.bookService.get(categories[0]);
+        Assert.assertEquals(list0.size(), 2);
+        compare(list0.get(1F), books[0]);
+        compare(list0.get(2F), books[1]);
+
+        final Map<Float, Book> list1 = this.bookService.get(categories[1]);
+        Assert.assertEquals(list1.size(), 1);
+        compare(list1.get(2F), books[0]);
     }
 
     @Test
-    public void testSetCategoriesWithDelete() {
-        Assert.assertTrue(false);
+    public void testSetCategoriesWithDeleteUpdate() throws BookException, CategoryException {
+        final Book book = TestHelper.createBook();
+        final Category[] categories = TestHelper.createCategories(null, 3);
+        final Map<Category, Float> map1 = toMap(1, categories[0], categories[1]);
+        this.bookService.setCategories(book, map1);
+
+        final Map<Category, Float> map2 = toMap(1, categories[1], categories[2]);
+        this.bookService.setCategories(book, map2);
+
+        // deleted
+        final Map<Float, Book> list0 = this.bookService.get(categories[0]);
+        Assert.assertEquals(list0.size(), 0);
+
+        // updated from 2F to 1F
+        final Map<Float, Book> list1 = this.bookService.get(categories[1]);
+        Assert.assertEquals(list1.size(), 1);
+        compare(list1.get(1F), book);
+
+        // inserted
+        final Map<Float, Book> list2 = this.bookService.get(categories[2]);
+        Assert.assertEquals(list2.size(), 1);
+        compare(list2.get(2F), book);
     }
 
     @Test
-    public void testSetCategoriesWithUpdate() {
-        Assert.assertTrue(false);
+    public void testSetCategoriesWithPartialNormalize() throws BookException, CategoryException {
+        final Book[] books = TestHelper.createBooks(4);
+        final Category category = TestHelper.createCategory(null);
+        this.bookService.setCategories(books[0], Collections.singletonMap(category, 1F));
+        this.bookService.setCategories(books[2], Collections.singletonMap(category, 2F));
+        this.bookService.setCategories(books[3], Collections.singletonMap(category, 4F));
+
+        this.bookService.setCategories(books[1], Collections.singletonMap(category, 2F));
+
+        final Map<Float, Book> map = this.bookService.get(category);
+        Assert.assertEquals(map.size(), 4);
+        compare(map.get(1F), books[0]);
+        compare(map.get(2F), books[1]);
+        compare(map.get(3F), books[2]);
+        compare(map.get(4F), books[3]);
     }
 
     @Test
-    public void testSetCategoriesWithFullNormalize() {
-        Assert.assertTrue(false);
-    }
+    public void testSetCategoriesWithFullNormalize() throws BookException, CategoryException {
+        final Book[] books = TestHelper.createBooks(4);
+        final Category category = TestHelper.createCategory(null);
+        this.bookService.setCategories(books[1], Collections.singletonMap(category, 1F));
+        this.bookService.setCategories(books[2], Collections.singletonMap(category, 2F));
+        this.bookService.setCategories(books[3], Collections.singletonMap(category, 3F));
 
-    @Test
-    public void testSetCategoriesWithPartialNormalize() {
-        Assert.assertTrue(false);
+        this.bookService.setCategories(books[0], Collections.singletonMap(category, 1F));
+
+        final Map<Float, Book> map = this.bookService.get(category);
+        Assert.assertEquals(map.size(), 4);
+        compare(map.get(1F), books[0]);
+        compare(map.get(2F), books[1]);
+        compare(map.get(3F), books[2]);
+        compare(map.get(4F), books[3]);
     }
 
     private void compare(final Book actual, final String name, final String sortedName,
@@ -178,5 +248,13 @@ public class BookServiceTest extends AbstractTest {
         Assert.assertEquals(actual.getSortedName(), expected.getSortedName());
         Assert.assertEquals(actual.getPublishDate(), expected.getPublishDate());
         Assert.assertEquals(actual.getDescription(), expected.getDescription());
+    }
+
+    private Map<Category, Float> toMap(float start, final Category... categories) {
+        final Map<Category, Float> map = new HashMap<>(categories.length);
+        for (final Category category : categories) {
+            map.put(category, start++);
+        }
+        return map;
     }
 }

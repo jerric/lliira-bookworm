@@ -32,15 +32,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SELECT * FROM category_books WHERE category_id = #{id}
     ]]>
   </select>
-  
+
   <select id="selectByMinSibling" parameterType="CategoryBookData" resultMap="CategoryBookMap">
     <![CDATA[
         SELECT * FROM category_books 
-        WHERE category_id = #{categoryId} AND sibling_index >= #{siblingIndex} AND book_id != #{bookId}
+        WHERE category_id = #{categoryId} AND sibling_index >= #{siblingIndex}
         ORDER BY sibling_index ASC
     ]]>
   </select>
-  
+
 
   <insert id="insert" parameterType="CategoryBookData" useGeneratedKeys="true" keyProperty="id"
     keyColumn="id">
@@ -53,14 +53,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   <update id="update" parameterType="CategoryBookData">
     <![CDATA[
         UPDATE category_books 
-        SET book_id = #{bookId}, category_id = #{categoryId}, sibling_index = #{siblingIndex} 
+        SET sibling_index = #{siblingIndex} 
         WHERE id = #{id}
     ]]>
   </update>
 
   <delete id="delete" parameterType="CategoryBookData">
     <![CDATA[
-        DELETE FROM category_books WHERE book_id = #{bookId} AND category_id = #{categoryId}
+        DELETE FROM category_books WHERE id = #{id}
     ]]>
   </delete>
 

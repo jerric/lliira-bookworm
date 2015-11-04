@@ -13,7 +13,7 @@ public class CategoryBookData implements Serializable {
     private int categoryId;
     private int bookId;
     private float siblingIndex;
-    
+
     public CategoryBookData(final int id) {
         this.id = id;
     }
@@ -47,7 +47,7 @@ public class CategoryBookData implements Serializable {
     public int getCategoryId() {
         return this.categoryId;
     }
-    
+
     public void setCategoryId(int categoryId) {
         this.categoryId = categoryId;
     }
@@ -58,7 +58,7 @@ public class CategoryBookData implements Serializable {
     public int getBookId() {
         return this.bookId;
     }
-    
+
     public void setBookId(int bookId) {
         this.bookId = bookId;
     }
@@ -69,5 +69,10 @@ public class CategoryBookData implements Serializable {
 
     public void setSiblingIndex(float siblingIndex) {
         this.siblingIndex = siblingIndex;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("id=%d, book=%d, cat=%d, sibling=%.3f", id, bookId, categoryId, siblingIndex);
     }
 }
