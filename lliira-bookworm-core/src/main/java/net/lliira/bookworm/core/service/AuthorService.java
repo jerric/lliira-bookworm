@@ -39,17 +39,15 @@ public class AuthorService {
     }
 
     public void update(final Author author) throws AuthorException {
-        final AuthorData authorData = (author instanceof AuthorData) ? (AuthorData) author
-                : new AuthorData(author);
+        // always create a new data, just in case validation fails, and we don't want to change the author.
+        final AuthorData authorData = new AuthorData(author);
         validate(authorData);
 
         if (1 != this.authorMapper.update(authorData)) throw new AuthorException("Updating author failed.");
 
-        // set the value back if author is newly created, since they may be normalized
-        if (!(author instanceof AuthorData)) {
-            author.setName(authorData.getName());
-            author.setDescription(authorData.getDescription());
-        }
+        // set the value back, since they may be normalized
+        author.setName(authorData.getName());
+        author.setDescription(authorData.getDescription());
     }
 
     private void validate(final AuthorData author) throws AuthorException {

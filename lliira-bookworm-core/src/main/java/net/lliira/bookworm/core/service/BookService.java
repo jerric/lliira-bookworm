@@ -100,17 +100,16 @@ public class BookService {
     }
 
     public void update(Book book) throws BookException {
-        final BookData bookData = (book instanceof BookData) ? (BookData) book : new BookData(book);
+        // always create new data, just in case validation fails and we don't want to change the book.
+        final BookData bookData = new BookData(book);
         validate(bookData);
         if (1 != this.bookMapper.update(bookData)) throw new BookException("Updating book failed.");
 
-        // set the values back if it's new, since they may be normalized.
-        if (!(book instanceof BookData)) {
-            book.setName(bookData.getName());
-            book.setSortedName(bookData.getSortedName());
-            book.setPublishDate(bookData.getPublishDate());
-            book.setDescription(bookData.getDescription());
-        }
+        // set the values back, since they may be normalized.
+        book.setName(bookData.getName());
+        book.setSortedName(bookData.getSortedName());
+        book.setPublishDate(bookData.getPublishDate());
+        book.setDescription(bookData.getDescription());
     }
 
     private void validate(final BookData book) throws BookException {

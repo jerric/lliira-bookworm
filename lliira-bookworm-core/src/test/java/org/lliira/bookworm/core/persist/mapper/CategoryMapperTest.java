@@ -94,6 +94,11 @@ public class CategoryMapperTest extends AbstractTest {
         category = categoryMapper.select(id);
         compare(category, id, name, parent.getId(), description, siblingIndex);
     }
+    
+    @Test
+    public void testUpdateParentToNull() {
+        Assert.assertTrue(false);
+    }
 
     @Test
     public void testDelete() {

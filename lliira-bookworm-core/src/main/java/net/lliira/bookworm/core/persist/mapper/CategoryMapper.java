@@ -10,6 +10,8 @@ public interface CategoryMapper {
     int insert(CategoryData category);
 
     int update(CategoryData category);
+    
+    int updateParentToNull(CategoryData category);
 
     int delete(CategoryData category);
 

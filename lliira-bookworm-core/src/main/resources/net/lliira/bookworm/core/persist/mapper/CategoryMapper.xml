@@ -30,6 +30,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     ]]>
   </update>
 
+  <update id="updateParentToNull" parameterType="CategoryData">
+    <![CDATA[
+        UPDATE categories SET parent_id = NULL WHERE parent_id = #{id}
+    ]]>
+  </update>
+
   <delete id="delete" parameterType="int">
     <![CDATA[
         DELETE FROM categories WHERE id = #{id}
