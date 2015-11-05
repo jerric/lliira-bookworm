@@ -51,7 +51,8 @@ public class BookService {
     private CategoryBookMapper categoryBookMapper;
 
     public Map<Float, Book> get(Category category) {
-        final CategoryData categoryData = new CategoryData(category);
+        final CategoryData categoryData = (category instanceof CategoryData) ? (CategoryData) category
+                : new CategoryData(category);
         final List<BookData> books = this.bookMapper.selectByCategory(categoryData);
         final List<CategoryBookData> catBooks = this.categoryBookMapper.selectByCategory(categoryData);
 
@@ -69,7 +70,9 @@ public class BookService {
     }
 
     public List<Book> get(Author author) {
-        final List<BookData> books = this.bookMapper.selectByAuthor(new AuthorData(author));
+        final AuthorData authorData = (author instanceof AuthorData) ? (AuthorData) author
+                : new AuthorData(author);
+        final List<BookData> books = this.bookMapper.selectByAuthor(authorData);
         return new ArrayList<>(books);
     }
 
@@ -97,15 +100,17 @@ public class BookService {
     }
 
     public void update(Book book) throws BookException {
-        final BookData bookData = new BookData(book);
+        final BookData bookData = (book instanceof BookData) ? (BookData) book : new BookData(book);
         validate(bookData);
         if (1 != this.bookMapper.update(bookData)) throw new BookException("Updating book failed.");
 
-        // set the values back, since they may be normalized.
-        book.setName(bookData.getName());
-        book.setSortedName(bookData.getSortedName());
-        book.setPublishDate(bookData.getPublishDate());
-        book.setDescription(bookData.getDescription());
+        // set the values back if it's new, since they may be normalized.
+        if (!(book instanceof BookData)) {
+            book.setName(bookData.getName());
+            book.setSortedName(bookData.getSortedName());
+            book.setPublishDate(bookData.getPublishDate());
+            book.setDescription(bookData.getDescription());
+        }
     }
 
     private void validate(final BookData book) throws BookException {
@@ -137,7 +142,7 @@ public class BookService {
     }
 
     public void delete(Book book) throws BookException {
-        final BookData bookData = new BookData(book);
+        final BookData bookData = (book instanceof BookData) ? (BookData) book : new BookData(book);
 
         // need to delete author & category associations first
         this.bookAuthorMapper.deleteByBook(bookData);
@@ -147,7 +152,7 @@ public class BookService {
     }
 
     public void setAuthors(final Book book, final Collection<Author> authors) throws BookException {
-        final BookData bookData = new BookData(book);
+        final BookData bookData = (book instanceof BookData) ? (BookData) book : new BookData(book);
 
         // get previous authors of the book
         final List<BookAuthorData> prevBookAuthors = this.bookAuthorMapper.selectByBook(bookData);
@@ -185,7 +190,7 @@ public class BookService {
     }
 
     public void setCategories(final Book book, final Map<Category, Float> categories) throws BookException {
-        final BookData bookData = new BookData(book);
+        final BookData bookData = (book instanceof BookData) ? (BookData) book : new BookData(book);
 
         // get previous categories of the book
         final List<CategoryBookData> prevCatBooks = this.categoryBookMapper.selectByBook(bookData);

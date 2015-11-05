@@ -39,14 +39,17 @@ public class AuthorService {
     }
 
     public void update(final Author author) throws AuthorException {
-        final AuthorData authorData = new AuthorData(author);
+        final AuthorData authorData = (author instanceof AuthorData) ? (AuthorData) author
+                : new AuthorData(author);
         validate(authorData);
 
         if (1 != this.authorMapper.update(authorData)) throw new AuthorException("Updating author failed.");
 
-        // set the value back, since they may be normalized
-        author.setName(authorData.getName());
-        author.setDescription(authorData.getDescription());
+        // set the value back if author is newly created, since they may be normalized
+        if (!(author instanceof AuthorData)) {
+            author.setName(authorData.getName());
+            author.setDescription(authorData.getDescription());
+        }
     }
 
     private void validate(final AuthorData author) throws AuthorException {
@@ -59,7 +62,8 @@ public class AuthorService {
     }
 
     public void delete(final Author author) throws AuthorException {
-        final AuthorData authorData = new AuthorData(author);
+        final AuthorData authorData = (author instanceof AuthorData) ? (AuthorData) author
+                : new AuthorData(author);
 
         // before deleting the author need to delete all references to it.
         this.bookAuthorMapper.deleteByAuthor(authorData);
@@ -85,7 +89,8 @@ public class AuthorService {
      * @return
      */
     public Set<Author> get(final Book book) {
-        final List<AuthorData> authors = this.authorMapper.selectByBook(new BookData(book));
+        final BookData bookData = (book instanceof BookData) ? (BookData) book : new BookData(book);
+        final List<AuthorData> authors = this.authorMapper.selectByBook(bookData);
         return new HashSet<>(authors);
     }
 
