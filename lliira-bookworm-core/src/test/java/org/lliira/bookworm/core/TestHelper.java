@@ -2,6 +2,7 @@ package org.lliira.bookworm.core;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 import net.lliira.bookworm.core.AuthorException;
@@ -71,7 +72,14 @@ public class TestHelper {
         final CategoryService categoryService = BookwormHelper.get(CategoryService.class);
         final String name = "category-name-" + random.nextInt();
         final String description = "category-desc-" + random.nextInt();
-        return categoryService.create(name, parent, description);
+
+        final List<Category> siblings = categoryService.get(parent);
+        float siblingIndex = 0;
+        for (final Category sibling : siblings) {
+            if (siblingIndex < sibling.getSiblingIndex()) siblingIndex = sibling.getSiblingIndex();
+        }
+        siblingIndex++;
+        return categoryService.create(name, parent, description, siblingIndex);
     }
 
     public static Category[] createCategories(final Category parent, final int count)

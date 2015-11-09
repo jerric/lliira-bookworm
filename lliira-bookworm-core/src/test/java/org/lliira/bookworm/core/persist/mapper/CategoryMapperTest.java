@@ -1,6 +1,8 @@
 package org.lliira.bookworm.core.persist.mapper;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +14,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import net.lliira.bookworm.core.BookwormHelper;
+import net.lliira.bookworm.core.model.Category;
 import net.lliira.bookworm.core.persist.mapper.CategoryBookMapper;
 import net.lliira.bookworm.core.persist.mapper.CategoryMapper;
 import net.lliira.bookworm.core.persist.model.BookData;
@@ -31,7 +34,7 @@ public class CategoryMapperTest extends AbstractTest {
     public void testInsert() {
         final String name = "name-" + random.nextInt();
         final String description = "desc-" + random.nextInt();
-        final float siblingIndex = 0;
+        final float siblingIndex = 1F;
         CategoryData category = new CategoryData();
         category.setName(name);
         category.setDescription(description);
@@ -51,12 +54,21 @@ public class CategoryMapperTest extends AbstractTest {
 
         // test adding a sibling on root level;
         final CategoryData category2 = PersistTestHelper.createCategory(null);
-        Assert.assertEquals(category2.getSiblingIndex(), 1F);
+        Assert.assertEquals(category2.getSiblingIndex(), 2F);
 
-        final List<CategoryData> categories = categoryMapper.selectRoots();
-        Assert.assertEquals(categories.size(), 2);
-        compare(categories.get(0), category);
-        compare(categories.get(1), category2);
+        final List<CategoryData> roots = categoryMapper.selectRoots();
+        Assert.assertEquals(roots.size(), 2);
+
+        // the categories might not be ordered correctly
+        Collections.sort(roots, new Comparator<Category>() {
+            @Override
+            public int compare(Category o1, Category o2) {
+                return Float.compare(o1.getSiblingIndex(), o2.getSiblingIndex());
+            }
+        });
+
+        compare(roots.get(0), category);
+        compare(roots.get(1), category2);
     }
 
     @Test
@@ -94,10 +106,41 @@ public class CategoryMapperTest extends AbstractTest {
         category = categoryMapper.select(id);
         compare(category, id, name, parent.getId(), description, siblingIndex);
     }
-    
+
     @Test
     public void testUpdateParentToNull() {
-        Assert.assertTrue(false);
+        final CategoryData parent = PersistTestHelper.createCategory(null);
+        final CategoryData child1 = PersistTestHelper.createCategory(parent);
+
+        // assign parent to child2 by update
+        final CategoryData child2 = PersistTestHelper.createCategory(null);
+        child2.setParentId(parent.getId());
+        child2.setSiblingIndex(2);
+        Assert.assertEquals(this.categoryMapper.update(child2), 1);
+
+        final List<CategoryData> children = this.categoryMapper.selectByParent(parent);
+        Assert.assertEquals(children.size(), 2);
+        compare(children.get(0), child1);
+        compare(children.get(1), child2);
+
+        // no unset parent
+        Assert.assertEquals(this.categoryMapper.updateParentToNull(parent), 2);
+        Assert.assertEquals(this.categoryMapper.selectByParent(parent).size(), 0);
+        final List<CategoryData> roots = this.categoryMapper.selectRoots();
+        Assert.assertEquals(roots.size(), 3);
+
+        // the categories might not be ordered correctly
+        Collections.sort(roots, new Comparator<Category>() {
+            @Override
+            public int compare(Category o1, Category o2) {
+                return o1.getId() - o2.getId();
+            }
+        });
+
+        compare(roots.get(0), parent);
+        // cannot use child1 & child2 directly, since the parent has been unset.
+        compare(roots.get(1), this.categoryMapper.select(child1.getId()));
+        compare(roots.get(2), this.categoryMapper.select(child2.getId()));
     }
 
     @Test

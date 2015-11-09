@@ -31,7 +31,8 @@ CREATE TABLE IF NOT EXISTS categories (
 	parent_id INT,
 	sibling_index DECIMAL(5,2) NOT NULL,
 	description TEXT,
-	UNIQUE (parent_id, sibling_index)
+    UNIQUE (parent_id, name),
+    UNIQUE (parent_id, sibling_index)
 );
 
 CREATE TABLE IF NOT EXISTS book_authors (

@@ -89,9 +89,7 @@ public class CategoryBookMapperTest extends AbstractTest {
         final CategoryBookData catBook = new CategoryBookData(category1.getId(), book.getId(), 1F);
         Assert.assertEquals(this.categoryBookMapper.insert(catBook), 1);
         
-        final CategoryData category2 = PersistTestHelper.createCategory(null);
         final float siblingIndex = 3F;
-        catBook.setCategoryId(category2.getId());
         catBook.setSiblingIndex(siblingIndex);
         Assert.assertEquals(this.categoryBookMapper.update(catBook), 1);
         

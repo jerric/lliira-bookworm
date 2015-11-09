@@ -1,6 +1,12 @@
 package net.lliira.bookworm.core.service;
 
+import static net.lliira.bookworm.core.BookwormHelper.ds;
+import static net.lliira.bookworm.core.BookwormHelper.getIncrement;
+import static net.lliira.bookworm.core.BookwormHelper.ns;
+
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +66,7 @@ public class CategoryService {
         category.setName(name);
         category.setParent(parent);
         category.setDescription(description);
+        category.setSiblingIndex(siblingIndex);
 
         validate(category);
 
@@ -81,12 +88,47 @@ public class CategoryService {
         category.setSiblingIndex(categoryData.getSiblingIndex());
     }
 
-    private void validate(final CategoryData category) {
+    private void validate(final CategoryData category) throws CategoryException {
+        // validate category name
+        final String name = category.getName();
+        if (name == null || name.trim().isEmpty())
+            throw new CategoryException("Category name cannot be null or empty");
+        category.setName(name.trim());
 
-    }
+        if (category.getDescription() != null) category.setDescription(category.getDescription().trim());
 
-    private void normalizeSiblingIndexes(CategoryData category) {
+        // make sure name is unique
+        final List<Category> siblings = get(category.getParent());
+        final int nsibling = ns(category.getSiblingIndex());
 
+        // check if there is a conflict
+        int start = -1;
+        for (int i = 0; i < siblings.size(); i++) {
+            final Category sibling = siblings.get(i);
+            final int ns = ns(sibling.getSiblingIndex());
+            if (ns == nsibling && sibling.getId() != sibling.getId()) start = i;
+            if (ns >= nsibling) break;
+        }
+
+        if (start != -1) { // there is a conflict
+            final int increment = getIncrement(nsibling);
+            int prevIndex = nsibling;
+            final Deque<Category> updates = new ArrayDeque<>();
+            for (int i = start; i < siblings.size(); i++) {
+                final Category sibling = siblings.get(i);
+                final int ns = ns(sibling.getSiblingIndex());
+                if (ns > prevIndex) break; // the following index is big enough to avoid conflict, break;
+                prevIndex = ns + increment;
+                sibling.setSiblingIndex(ds(prevIndex));
+                updates.offerLast(sibling);
+            }
+
+            while (!updates.isEmpty()) {
+                final Category sibling = updates.pollLast();
+                if (1 != this.categoryMapper.update((CategoryData) sibling))
+                    throw new CategoryException("Update sibling failed. " + sibling);
+            }
+        }
     }
 
     public void delete(final Category category) throws CategoryException {
