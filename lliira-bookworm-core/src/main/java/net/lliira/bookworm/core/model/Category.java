@@ -1,5 +1,7 @@
 package net.lliira.bookworm.core.model;
 
+import net.lliira.bookworm.core.service.CategoryService;
+
 public interface Category {
 
     int getId();
@@ -11,6 +13,8 @@ public interface Category {
     float getSiblingIndex();
 
     String getDescription();
+    
+    CategoryService getCategoryService();
 
     void setName(final String name);
 

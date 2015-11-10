@@ -3,6 +3,7 @@ package net.lliira.bookworm.core.persist.model;
 import java.io.Serializable;
 
 import net.lliira.bookworm.core.model.Category;
+import net.lliira.bookworm.core.service.CategoryService;
 
 public class CategoryData implements Category, Serializable {
 
@@ -14,19 +15,19 @@ public class CategoryData implements Category, Serializable {
     private int id;
     private String name;
     private Integer parentId;
-    private Category parent;
     private float siblingIndex;
     private String description;
+    private CategoryService categoryService;
 
     public CategoryData() {}
 
-    public CategoryData(Category category) {
+    public CategoryData(final Category category) {
         this.id = category.getId();
         this.name = category.getName();
-        this.parent = category.getParent();
-        if (this.parent != null) this.parentId = this.parent.getId();
+        this.parentId = (category.getParent() == null) ? null : category.getParent().getId();
         this.siblingIndex = category.getSiblingIndex();
         this.description = category.getDescription();
+        this.categoryService = category.getCategoryService();
     }
 
     @Override
@@ -66,13 +67,17 @@ public class CategoryData implements Category, Serializable {
 
     @Override
     public Category getParent() {
-        return this.parent;
+        return (parentId == null) ? null : this.categoryService.get(parentId);
     }
 
     @Override
     public void setParent(final Category parent) {
-        this.parent = parent;
         this.parentId = (parent == null) ? null : parent.getId();
+    }
+
+    @Override
+    public CategoryService getCategoryService() {
+        return this.categoryService;
     }
 
     /**
@@ -96,7 +101,10 @@ public class CategoryData implements Category, Serializable {
      */
     public void setParentId(Integer parentId) {
         this.parentId = parentId;
-        this.parent = null;
     }
 
+    public CategoryData setCategoryService(CategoryService categoryService) {
+        this.categoryService = categoryService;
+        return this;
+    }
 }

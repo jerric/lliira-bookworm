@@ -5,12 +5,11 @@ import static net.lliira.bookworm.core.BookwormHelper.getIncrement;
 import static net.lliira.bookworm.core.BookwormHelper.ns;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -43,7 +42,9 @@ public class CategoryService {
                     : new CategoryData(parent);
             categories = this.categoryMapper.selectByParent(parentData);
         }
-        return new ArrayList<>(categories);
+        // assign service to the category
+        return categories.stream().map((category) -> category.setCategoryService(this))
+                .collect(Collectors.toList());
     }
 
     public List<Category> getRoots() {
@@ -51,13 +52,14 @@ public class CategoryService {
     }
 
     public Category get(int id) {
-        return this.categoryMapper.select(id);
+        return this.categoryMapper.select(id).setCategoryService(this);
     }
 
     public Set<Category> get(Book book) {
         final BookData bookData = (book instanceof BookData) ? (BookData) book : new BookData(book);
         final List<CategoryData> categories = this.categoryMapper.selectByBook(bookData);
-        return new HashSet<>(categories);
+        return categories.stream().map((category) -> category.setCategoryService(this))
+                .collect(Collectors.toSet());
     }
 
     public Category create(final String name, final Category parent, final String description,
@@ -67,6 +69,7 @@ public class CategoryService {
         category.setParent(parent);
         category.setDescription(description);
         category.setSiblingIndex(siblingIndex);
+        category.setCategoryService(this);
 
         validate(category);
 

@@ -49,7 +49,7 @@ public class BookService {
 
     @Autowired
     private CategoryBookMapper categoryBookMapper;
-
+    
     public Map<Float, Book> get(Category category) {
         final CategoryData categoryData = (category instanceof CategoryData) ? (CategoryData) category
                 : new CategoryData(category);
