@@ -43,8 +43,12 @@ public class CategoryService {
             categories = this.categoryMapper.selectByParent(parentData);
         }
         // assign service to the category
-        return categories.stream().map((category) -> category.setCategoryService(this))
-                .collect(Collectors.toList());
+        return categories.stream().sorted((l, r) -> {
+            final float diff = l.getSiblingIndex() - r.getSiblingIndex();
+            if (diff > 0) return 1;
+            else if (diff < 0) return -1;
+            else return l.getId() - r.getId();
+        }).map((category) -> category.setCategoryService(this)).collect(Collectors.toList());
     }
 
     public List<Category> getRoots() {
@@ -109,7 +113,7 @@ public class CategoryService {
         for (int i = 0; i < siblings.size(); i++) {
             final Category sibling = siblings.get(i);
             final int ns = ns(sibling.getSiblingIndex());
-            if (ns == nsibling && sibling.getId() != sibling.getId()) start = i;
+            if (ns == nsibling && category.getId() != sibling.getId()) start = i;
             if (ns >= nsibling) break;
         }
 
@@ -117,8 +121,7 @@ public class CategoryService {
             final int increment = getIncrement(nsibling);
             int prevIndex = nsibling;
             final Deque<Category> updates = new ArrayDeque<>();
-            for (int i = start; i < siblings.size(); i++) {
-                final Category sibling = siblings.get(i);
+            for (final Category sibling : siblings) {
                 final int ns = ns(sibling.getSiblingIndex());
                 if (ns > prevIndex) break; // the following index is big enough to avoid conflict, break;
                 prevIndex = ns + increment;
